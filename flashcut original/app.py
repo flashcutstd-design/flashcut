@@ -38,12 +38,18 @@ load_dotenv()
 # ══════════════════════════════════════════════════════════
 BASE_DIR = Path(__file__).parent.resolve()
 
-# Persistent data dir: /data on Render, ./data locally
+# Persistent data dir: /data on Render, ./data locally, /tmp on Vercel
 DATA_DIR = Path(os.environ.get('RENDER_DISK_PATH', BASE_DIR / 'data'))
-DATA_DIR.mkdir(parents=True, exist_ok=True)
+try:
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+except OSError:
+    DATA_DIR = Path('/tmp')
 
 UPLOAD_DIR = DATA_DIR / 'uploads'
-UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+try:
+    UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+except OSError:
+    pass
 
 DB_PATH = DATA_DIR / 'flashcut.db'
 
