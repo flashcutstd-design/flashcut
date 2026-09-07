@@ -1,0 +1,19 @@
+# ── Core web framework ────────────────────────────────────
+Flask==3.0.3
+gunicorn==23.0.0
+
+# ── CORS ──────────────────────────────────────────────────
+Flask-Cors==5.0.0
+
+# ── Supabase Python client ────────────────────────────────
+supabase==2.10.0
+
+# ── ImageKit Python SDK (v5 — media / video CDN uploads) ─
+imagekitio==5.9.0
+
+# ── Env variable loading ──────────────────────────────────
+python-dotenv==1.0.1
+
+# ── Utilities ─────────────────────────────────────────────
+Werkzeug==3.0.6
+requests==2.32.3

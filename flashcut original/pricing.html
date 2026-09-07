@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FlashCut – Pricing</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='52' font-size='52'>⚡</text></svg>" />
+  <meta name="description" content="Simple, transparent pricing for FlashCut. Starter ₹999, Pro ₹4,499, Business ₹11,999. No hidden fees." />
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #0a0808;
+      --surface: #100a0a;
+      --border: #2a1010;
+      --accent: #d4a017;
+      --accent-light: #b8860b;
+      --accent-glow: rgba(212,160,23, 0.22);
+      --text: #f5f0f0;
+      --muted: #7a6060;
+      --card-bg: #110d0d;
+      --gold: #f59e0b;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 600px) {
+      .cards {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      table {
+        font-size: .8rem;
+      }
+    }
+
+    /* ── HERO ── */
+    .hero {
+      text-align: center;
+      padding: 6rem 1.5rem 3rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -120px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .badge {
+      display: inline-block;
+      background: var(--accent-glow);
+      border: 1px solid var(--accent);
+      color: var(--accent-light);
+      font-size: .78rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+      padding: .3rem .9rem;
+      border-radius: 999px;
+      margin-bottom: 1.2rem;
+      text-transform: uppercase;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      line-height: 1.1;
+      margin-bottom: 1.1rem;
+    }
+
+    .hero h1 em {
+      font-style: normal;
+      color: var(--accent-light);
+    }
+
+    .hero p {
+      color: var(--muted);
+      font-size: 1.1rem;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+
+    /* ── SCROLL REVEAL ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(36px);
+      transition: opacity .65s cubic-bezier(.22, 1, .36, 1), transform .65s cubic-bezier(.22, 1, .36, 1);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-delay-1 {
+      transition-delay: .1s;
+    }
+
+    .reveal-delay-2 {
+      transition-delay: .22s;
+    }
+
+    .reveal-delay-3 {
+      transition-delay: .34s;
+    }
+
+    /* ── CARDS ── */
+    .cards-section {
+      padding: 1.5rem 1.5rem 5rem;
+    }
+
+    .cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      justify-content: center;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2rem 1.8rem;
+      flex: 1 1 280px;
+      max-width: 320px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: transform .3s cubic-bezier(.22, 1, .36, 1), border-color .3s, box-shadow .3s;
+    }
+
+    .card:hover {
+      transform: translateY(-8px) scale(1.02);
+      border-color: var(--accent);
+      box-shadow: 0 24px 60px var(--accent-glow);
+    }
+
+    .card.popular {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent), 0 20px 60px var(--accent-glow);
+    }
+
+    .popular-tag {
+      position: absolute;
+      top: -13px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--accent);
+      color: #fff;
+      font-size: .72rem;
+      font-weight: 700;
+      padding: .25rem .9rem;
+      border-radius: 999px;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .card-name {
+      font-size: .8rem;
+      font-weight: 700;
+      color: var(--muted);
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      margin-bottom: .6rem;
+    }
+
+    .price {
+      display: flex;
+      align-items: flex-end;
+      gap: .25rem;
+      margin-bottom: .3rem;
+    }
+
+    .price .amount {
+      font-size: 3rem;
+      font-weight: 800;
+      letter-spacing: -2px;
+      line-height: 1;
+    }
+
+    .price .currency {
+      font-size: 1.3rem;
+      font-weight: 700;
+      padding-bottom: .5rem;
+      color: var(--muted);
+    }
+
+    .price .period {
+      font-size: .85rem;
+      color: var(--muted);
+      padding-bottom: .4rem;
+    }
+
+    .price-note {
+      font-size: .78rem;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+      min-height: 1.2em;
+    }
+
+    .card-desc {
+      font-size: .9rem;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+    }
+
+    .features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: .6rem;
+      margin-bottom: 2rem;
+      flex: 1;
+    }
+
+    .features li {
+      display: flex;
+      align-items: flex-start;
+      gap: .65rem;
+      font-size: .9rem;
+    }
+
+    .features li::before {
+      content: '✓';
+      color: var(--accent-light);
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: .05em;
+    }
+
+    .features li.dim {
+      color: var(--muted);
+    }
+
+    .features li.dim::before {
+      content: '—';
+      color: var(--border);
+    }
+
+    .btn {
+      display: block;
+      text-align: center;
+      padding: .8rem;
+      border-radius: 10px;
+      font-size: .92rem;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: opacity .2s, transform .15s;
+    }
+
+    .btn:hover {
+      opacity: .85;
+      transform: scale(1.01);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--accent);
+      color: var(--accent-light);
+    }
+
+    /* ── CARD SHINE ── */
+    .card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, .04) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    /* ── COMPARISON TABLE ── */
+    .comparison {
+      padding: 5rem 1.5rem;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      text-align: center;
+      font-size: .78rem;
+      font-weight: 700;
+      color: var(--accent-light);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      margin-bottom: .6rem;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 3rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: .9rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      font-size: .9rem;
+    }
+
+    thead th {
+      color: var(--muted);
+      font-weight: 600;
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    thead th:first-child {
+      width: 40%;
+    }
+
+    tbody tr:hover td {
+      background: rgba(255, 255, 255, .02);
+    }
+
+    tbody td:first-child {
+      color: var(--text);
+    }
+
+    tbody td:not(:first-child) {
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .check {
+      color: var(--accent-light);
+      font-weight: 700;
+    }
+
+    .cross {
+      color: var(--border);
+    }
+
+    /* ── FAQ ── */
+    .faq {
+      padding: 5rem 1.5rem;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+      transition: border-color .3s;
+    }
+
+    .faq-item.active {
+      border-color: var(--accent);
+    }
+
+    .faq-q {
+      width: 100%;
+      background: none;
+      border: none;
+      color: var(--text);
+      text-align: left;
+      padding: 1.2rem 0;
+      font-size: .95rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      transition: color .25s;
+    }
+
+    .faq-q:hover {
+      color: var(--accent-light);
+    }
+
+    .faq-icon {
+      width: 26px;
+      height: 26px;
+      flex-shrink: 0;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      color: var(--muted);
+      transition: background .3s, border-color .3s, transform .4s cubic-bezier(.22, 1, .36, 1), color .3s;
+    }
+
+    .faq-q.open .faq-icon {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+      transform: rotate(45deg);
+    }
+
+    .faq-a {
+      max-height: 0;
+      overflow: hidden;
+      color: var(--muted);
+      font-size: .9rem;
+      transition: max-height .45s cubic-bezier(.22, 1, .36, 1), opacity .35s, padding .3s;
+      opacity: 0;
+    }
+
+    .faq-a.open {
+      max-height: 200px;
+      padding-bottom: 1.2rem;
+      opacity: 1;
+    }
+
+    /* ── CONTACT CTA ── */
+    .cta-section {
+      text-align: center;
+      padding: 5rem 1.5rem 6rem;
+      background: linear-gradient(to bottom, var(--bg), #140508);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      bottom: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 500px;
+      height: 400px;
+      background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .cta-section h2 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: .8rem;
+    }
+
+    .cta-section p {
+      color: var(--muted);
+      font-size: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-lg {
+      padding: .9rem 2rem;
+      font-size: 1rem;
+      border-radius: 12px;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: .8rem;
+    }
+
+    @media (max-width: 600px) {
+      .nav-links {
+        display: none;
+      }
+
+      .cards {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      table {
+        font-size: .8rem;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+
+  <!-- NAV -->
+  <nav class="nav-desktop" id="navbar"></nav>
+  <nav class="nav-mobile"></nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="badge">Simple, Transparent Pricing</div>
+    <h1>Content that <em>converts</em>,<br>plans that scale.</h1>
+    <p>Professional video editing delivered at lightning speed. Pick a plan that fits your brand.</p>
+  </section>
+
+  <!-- PRICING CARDS -->
+  <section class="cards-section">
+    <div class="cards" id="pricing-cards">
+      <!-- Populated from /api/pricing -->
+      <div style="text-align:center;color:#7a6060;padding:60px 20px;width:100%">Loading plans…</div>
+    </div>
+  </section>
+
+  <!-- COMPARISON TABLE -->
+  <section class="comparison">
+    <div class="section-label">Compare Plans</div>
+    <h2 class="section-title">Everything side by side</h2>
+    <table id="compare-table">
+      <thead id="compare-head">
+        <tr><th>Feature</th></tr>
+      </thead>
+      <tbody id="compare-body">
+        <tr><td colspan="4" style="text-align:center;color:#7a6060;padding:20px">Loading…</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq">
+    <div class="section-label">FAQ</div>
+    <h2 class="section-title">Common questions</h2>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">How fast is the 10-minute delivery? <div class="faq-icon">+</div>
+        </button>
+      <div class="faq-a">Once your shoot wraps, our AI-assisted editing pipeline processes your footage and delivers a
+        polished reel in under 10 minutes — directly to your dashboard.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">Can I switch plans at any time? <div class="faq-icon">+</div>
+        </button>
+      <div class="faq-a">Yes. You can upgrade or downgrade your plan at any time. Changes take effect at the start of
+        your next billing cycle.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">What does the annual plan include? <div class="faq-icon">+</div>
+        </button>
+      <div class="faq-a">Annual plans include a 20% discount applied to all monthly pricing. Everything else — features,
+        limits, and support levels — stays exactly the same.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">Do you offer custom enterprise plans? <div class="faq-icon">+
+        </div></button>
+      <div class="faq-a">Absolutely. The Business plan can be tailored to multi-brand agencies or large teams. Reach out
+        via Contact Sales for a custom quote.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">What platforms do you format reels for? <div class="faq-icon">+
+        </div></button>
+      <div class="faq-a">We export for Instagram Reels, TikTok, YouTube Shorts, and LinkedIn — with optimal aspect
+        ratios and specs for each platform.</div>
+    </div>
+  </section>
+
+  <!-- CONTACT CTA -->
+  <section class="cta-section" id="contact">
+    <div class="badge">Enterprise & Custom Plans</div>
+    <h2>Need something bigger?</h2>
+    <p>Talk to our team about a custom plan built around your brand's content goals.</p>
+    <div class="cta-buttons">
+      <a href="mailto:sales@flashcut.io" class="btn btn-primary btn-lg">Contact Sales</a>
+      <a href="booking.html" class="btn btn-outline btn-lg">Book a Demo</a>
+    </div>
+  </section>
+
+  <div class="booking-modal" id="bookingModal" aria-hidden="true">
+    <div class="booking-modal-backdrop" data-close-booking></div>
+    <div class="booking-modal-content glass">
+      <button type="button" class="booking-modal-close" aria-label="Close booking form">×</button>
+      <div class="booking-modal-header">
+        <p class="eyebrow">Book Your Shoot</p>
+        <h2>Complete the booking form</h2>
+        <p class="section-sub">Tell us your shoot goals, preferred date, and location so we can reserve your slot fast.
+        </p>
+      </div>
+      <form class="booking-form" id="bookingForm">
+        <div class="booking-grid">
+          <div class="form-group">
+            <label class="form-label" for="booking-name">Full Name</label>
+            <input id="booking-name" class="form-input" type="text" name="name" placeholder="Jane Doe" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="booking-email">Email Address</label>
+            <input id="booking-email" class="form-input" type="email" name="email" placeholder="jane@example.com"
+              required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="booking-phone">Phone Number</label>
+            <input id="booking-phone" class="form-input" type="tel" name="phone" placeholder="+91 98765 43210" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="booking-date">Preferred Date</label>
+            <input id="booking-date" class="form-input" type="date" name="date" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="booking-time">Preferred Time</label>
+            <input id="booking-time" class="form-input" type="time" name="time" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="booking-location">Location / Studio</label>
+            <input id="booking-location" class="form-input" type="text" name="location"
+              placeholder="Bangalore / Studio A" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="booking-package">Select Package</label>
+            <select id="booking-package" class="form-select" name="package">
+              <option value="starter">Starter - ₹999</option>
+              <option value="pro">Pro - ₹4,499</option>
+              <option value="business">Business - ₹11,999</option>
+            </select>
+          </div>
+          <div class="form-group form-group-full">
+            <label class="form-label" for="booking-details">Tell us more</label>
+            <textarea id="booking-details" class="form-textarea" name="details"
+              placeholder="Share your shoot concept, number of people, and any special requests."></textarea>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary full">Send Booking Request</button>
+        <p class="booking-note">Our team replies within 15 minutes to confirm your slot.</p>
+        <div class="booking-success" id="bookingSuccess" hidden>Thanks! Your booking request has been sent. We'll
+          contact you shortly.</div>
+      </form>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a href="index.html" class="logo">Flash<span>Cut</span></a>
+        <p>Shoot. Edit. Deliver.<br />In 10 Minutes.</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h5>Company</h5>
+          <a href="index.html">Home</a>
+          <a href="contact.html">Contact</a>
+          <a href="#">Careers</a>
+          <a href="#">Press</a>
+        </div>
+        <div class="footer-col">
+          <h5>Services</h5>
+          <a href="portfolio.html">Portfolio</a>
+          <a href="pricing.html">Pricing</a>
+          <a href="how-it-works.html">How It Works</a>
+          <a href="#">Events</a>
+        </div>
+        <div class="footer-col">
+          <h5>Connect</h5>
+          <a href="#">Instagram</a>
+          <a href="#">TikTok</a>
+          <a href="#">YouTube</a>
+        </div>
+        <div class="footer-col">
+          <div class="social-label">Follow Us</div>
+          <div class="social-row">
+            <a href="https://www.instagram.com/_flash.cut.studio_?igsh=bDd1OG16b3BtMDg1" class="social-btn instagram"
+              target="_blank" rel="noopener" aria-label="Instagram">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
+              </svg>
+            </a>
+            <a href="#" class="social-btn facebook" aria-label="Facebook">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M24 12.073C24 5.404 18.627 0 12 0S0 5.404 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.971h-1.513c-1.491 0-1.956.931-1.956 1.886v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z" />
+              </svg>
+            </a>
+            <a href="#" class="social-btn youtube" aria-label="YouTube">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M23.495 6.205a3.007 3.007 0 00-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 00.527 6.205a31.247 31.247 0 00-.522 5.805 31.247 31.247 0 00.522 5.783 3.007 3.007 0 002.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 002.088-2.088 31.247 31.247 0 00.5-5.783 31.247 31.247 0 00-.5-5.805zM9.609 15.601V8.408l6.264 3.602z" />
+              </svg>
+            </a>
+            <a href="#" class="social-btn tiktok" aria-label="TikTok">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 FlashCut. All rights reserved.</p>
+      <div class="footer-legal">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="nav.js"></script>
+  <script src="script.js"></script>
+<script src="settings.js"></script>
+  <script src="nav.js"></script>
+  <script src="script.js"></script>
+<script src="settings.js"></script>
+  <script>
+    // ── Live Pricing from Flask ───────────────────────────
+    async function loadPricing() {
+      try {
+        const res   = await fetch('/api/pricing');
+        const plans = await res.json();
+        if (!plans.length) return;
+
+        // ── Cards ──
+        const cardsWrap = document.getElementById('pricing-cards');
+        if (cardsWrap) {
+          cardsWrap.innerHTML = plans.map((p, i) => {
+            const features  = (p.features || '').split('|');
+            const isPopular = !!p.popular;
+            const fmtPrice  = Number(p.price).toLocaleString('en-IN');
+            const delays    = ['reveal-delay-1','reveal-delay-2','reveal-delay-3'];
+            const featHtml  = features.map(f => `<li>${f}</li>`).join('');
+            return `
+            <div class="card${isPopular ? ' popular' : ''} reveal ${delays[i] || ''}">
+              ${isPopular ? '<div class="popular-tag">Most Popular</div>' : ''}
+              <div class="card-name">${p.plan_name}</div>
+              <div class="price">
+                <span class="currency">₹</span>
+                <span class="amount">${fmtPrice}</span>
+              </div>
+              <p class="card-desc">${p.description || ''}</p>
+              <ul class="features">${featHtml}</ul>
+              <a href="booking.html" class="btn ${isPopular ? 'btn-primary' : 'btn-outline'}">
+                ${isPopular ? 'Book Now' : 'Get Started'}
+              </a>
+            </div>`;
+          }).join('');
+
+          const obs = new IntersectionObserver(entries => {
+            entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+          }, { threshold: 0.12 });
+          cardsWrap.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+        }
+
+        // ── Comparison table ──
+        const thead = document.getElementById('compare-head');
+        const tbody = document.getElementById('compare-body');
+        if (thead && tbody) {
+          const headerRow = document.createElement('tr');
+          headerRow.innerHTML = '<th>Feature</th>' + plans.map(p =>
+            `<th>${p.plan_name} ₹${Number(p.price).toLocaleString('en-IN')}</th>`
+          ).join('');
+          thead.innerHTML = '';
+          thead.appendChild(headerRow);
+
+          const rows = [
+            ['Shoot duration',         plans.map((p,i) => ['1 hour','5 hours','2–3 days'][i] || '—')],
+            ['Edited reels',           plans.map((p,i) => ['1','5','Unlimited'][i] || '—')],
+            ['Export quality',         plans.map(() => '4K')],
+            ['Delivery speed',         plans.map((p,i) => ['10 minutes','10 minutes','Same-day highlight'][i] || '—')],
+            ['Priority editing queue', plans.map((p,i) => [false,true,true][i])],
+            ['Dedicated crew',         plans.map((p,i) => [false,false,true][i])],
+            ['Multi-day coverage',     plans.map((p,i) => [false,false,true][i])],
+            ['Drone footage',          plans.map((p,i) => [false,false,true][i])],
+            ['Revisions',              plans.map((p,i) => ['1','3','Unlimited'][i] || '—')],
+            ['Price',                  plans.map(p => '₹' + Number(p.price).toLocaleString('en-IN'))],
+          ];
+
+          tbody.innerHTML = rows.map(([label, vals]) =>
+            `<tr><td>${label}</td>${vals.map(v =>
+              typeof v === 'boolean'
+                ? `<td class="${v ? 'check' : 'cross'}">${v ? '✓' : '—'}</td>`
+                : `<td>${v}</td>`
+            ).join('')}</tr>`
+          ).join('');
+        }
+      } catch(e) { console.warn('Pricing load failed', e); }
+    }
+
+    loadPricing();
+
+    function toggleFaq(btn) {
+      const answer = btn.nextElementSibling;
+      const isOpen = btn.classList.contains('open');
+      document.querySelectorAll('.faq-q.open').forEach(q => {
+        q.classList.remove('open');
+        q.nextElementSibling.classList.remove('open');
+        q.closest('.faq-item').classList.remove('active');
+      });
+      if (!isOpen) {
+        btn.classList.add('open');
+        answer.classList.add('open');
+        btn.closest('.faq-item').classList.add('active');
+      }
+    }
+  </script>
+</body>
+</html>

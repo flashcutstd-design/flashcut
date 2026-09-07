@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About FlashCut — Story, Mission & Team</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='52' font-size='52'>⚡</text></svg>" />
+  <meta name="description" content="Learn about FlashCut — our story, mission, creator network and the team behind the fastest content production studio." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body.about-page { background: var(--bg); }
+    .about-hero {
+      padding: 140px 32px 60px;
+      max-width: 1180px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 40px;
+      align-items: center;
+    }
+    .about-hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.8rem, 5vw, 4.4rem);
+      line-height: 1.05;
+      margin: 0;
+      color: var(--text);
+    }
+    .about-hero p {
+      max-width: 610px;
+      margin: 24px 0 0;
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      line-height: 1.8;
+    }
+    .hero-ctas { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 32px; }
+    .about-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin-top: 40px; }
+    .about-stat { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 32px 24px; text-align: center; }
+    .about-stat span { display: block; font-size: 2.25rem; font-weight: 700; color: var(--text); margin-bottom: 10px; }
+    .about-stat p { color: var(--text-muted); font-size: 0.95rem; }
+    .about-grid { max-width: 1180px; margin: 0 auto; padding: 40px 32px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+    .about-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 26px; padding: 34px; }
+    .about-card h2 { margin-bottom: 18px; font-size: clamp(1.6rem, 2.5vw, 2.2rem); }
+    .about-card p { color: var(--text-muted); line-height: 1.8; }
+    .content-block { max-width: 1180px; margin: 0 auto; padding: 0 32px 40px; }
+    .content-block h2 { font-size: clamp(2rem, 3vw, 2.8rem); margin-bottom: 18px; }
+    .content-block p { margin-bottom: 22px; color: var(--text-muted); line-height: 1.8; }
+    .values-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
+    .value-card, .network-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 22px; padding: 28px; }
+    .value-card h3, .network-card h3 { margin-bottom: 10px; font-size: 1.05rem; }
+    .network-card span { display: inline-block; margin-top: 12px; color: var(--text-muted); font-size: 0.9rem; }
+    .network-pill { display: inline-flex; align-items: center; justify-content: center; padding: 12px 16px; border-radius: 999px; background: rgba(255,255,255,0.04); color: var(--text); font-size: 0.9rem; margin: 0 10px 10px 0; }
+    .team-members { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
+    .team-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px;
+      padding: 36px 24px 28px;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    }
+    .team-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 56px rgba(212,160,23,0.12);
+      border-color: rgba(212,160,23,0.25);
+    }
+    /* Photo circle */
+    .team-avatar {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      margin: 0 auto 20px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border: 3px solid rgba(212,160,23,0.35);
+      box-shadow: 0 0 0 6px rgba(212,160,23,0.08), 0 8px 32px rgba(0,0,0,0.4);
+    }
+    .team-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+    /* Fallback initials when no photo */
+    .team-avatar-initials {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 700;
+      color: #fff;
+      border-radius: 50%;
+    }
+    .team-card h3 {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 5px;
+    }
+    .team-role {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 14px;
+      padding: 4px 14px;
+      background: rgba(212,160,23,0.1);
+      border: 1px solid rgba(212,160,23,0.2);
+      border-radius: 50px;
+    }
+    .team-card p {
+      color: var(--text-muted);
+      font-size: 0.88rem;
+      line-height: 1.7;
+      margin: 0;
+    }
+    /* Social links on card */
+    .team-socials {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 18px;
+    }
+    .team-social-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      transition: background 0.2s, border-color 0.2s, transform 0.2s;
+    }
+    .team-social-btn:hover {
+      background: rgba(212,160,23,0.15);
+      border-color: rgba(212,160,23,0.4);
+      transform: translateY(-2px);
+    }
+    .team-social-btn svg {
+      width: 15px;
+      height: 15px;
+      fill: rgba(240,240,240,0.6);
+    }
+    .team-social-btn:hover svg { fill: var(--accent); }
+    .stat-highlight { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin: 40px 0; }
+    .stat-highlight div { padding: 28px 22px; border-radius: 20px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); text-align: center; }
+    .stat-highlight span { display: block; font-size: 2rem; font-weight: 700; color: var(--accent); margin-bottom: 10px; }
+    .stat-highlight p { color: var(--text-muted); font-size: 0.95rem; }
+    .about-cta { padding: 60px 32px 100px; }
+    .about-cta .cta-buttons { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 24px; }
+    @media (max-width: 900px) {
+      .about-hero { grid-template-columns: 1fr; padding: 100px 24px 40px; }
+      .about-stats, .about-grid, .values-grid, .stat-highlight { grid-template-columns: 1fr; }
+      .team-members { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 560px) {
+      .team-members { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body class="about-page">
+  <nav class="nav-desktop" id="navbar"></nav>
+  <main>
+    <section class="about-hero">
+      <div>
+        <p class="eyebrow">About FlashCut</p>
+        <h1>We make modern content production faster, clearer, and more collaborative.</h1>
+        <p>From concept to delivery, FlashCut removes the friction that slows brands and creators down. We launched with one goal: help teams create professional social-first video without weeks of waiting.</p>
+        <div class="hero-ctas">
+          <a href="booking.html" class="btn-primary">Join FlashCut</a>
+          <a href="contact.html" class="btn-ghost">Become a Creator</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="about-grid">
+      <div class="about-card">
+        <h2>Our Story</h2>
+        <p>FlashCut began at the intersection of creative urgency and technical excellence. Our founders saw too many shoots delayed by logistics, edits stretched out over days, and momentum lost before campaigns launched. We built a new model around speed, clarity, and professional results that keep pace with social culture.</p>
+      </div>
+      <div class="about-card">
+        <h2>Why We Started FlashCut</h2>
+        <p>Creators, marketing teams, and founders deserve reliable content production that doesn’t require endless back-and-forth. We started FlashCut to streamline shoot planning, simplify creative collaboration, and deliver finished content fast — without sacrificing quality or creative control.</p>
+      </div>
+    </section>
+
+    <section class="content-block">
+      <h2>Mission</h2>
+      <p>To empower every creator, brand, and storyteller with fast, premium video production that adapts to today’s speed-driven content economy.</p>
+      <h2>Vision</h2>
+      <p>To become the most trusted creative partner for teams who want to move quickly, look polished, and grow with a consistent stream of high-impact content.</p>
+    </section>
+    <section class="content-block">
+      <h2>Team Members</h2>
+      <div class="team-members">
+
+        <!-- Shannu -->
+        <div class="team-card">
+          <div class="team-avatar">
+            <img src="shannu.png" alt="Shannu" />
+          </div>
+          <h3>Shannu</h3>
+          <span class="team-role">Founder</span>
+          <p>Leads product vision and creator strategy with over a decade of studio and agency experience.</p>
+        </div>
+
+        <!-- Shiva Goud -->
+        <div class="team-card">
+          <div class="team-avatar">
+            <img src="shiva.jpeg" alt="Shiva Goud" />
+          </div>
+          <h3>Shiva Goud</h3>
+          <span class="team-role">CEO</span>
+          <p>Shapes visual storytelling, brand campaigns, and shoot direction for fast-turn content.</p>
+        </div>
+
+        <!-- Charan -->
+        <div class="team-card">
+          <div class="team-avatar">
+            <img src="charan2 flash.jpeg" alt="Charan" />
+          </div>
+          <h3>Charan</h3>
+          <span class="team-role">Operations Lead</span>
+          <p>Builds the FlashCut crew network, logistics systems, and quality frameworks that keep every project on time.</p>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="content-block">
+      <h2>Company Values</h2>
+      <div class="values-grid">
+        <div class="value-card">
+          <h3>Speed with excellence</h3>
+          <p>Move fast, but keep every frame carefully composed and every edit polished.</p>
+        </div>
+        <div class="value-card">
+          <h3>Creative clarity</h3>
+          <p>Make the process intuitive, transparent, and easy for every creator and client.</p>
+        </div>
+        <div class="value-card">
+          <h3>Partnership first</h3>
+          <p>Build trust through collaboration, responsiveness, and a shared commitment to great content.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="about-cta">
+      <div class="section-header">
+        <p class="eyebrow">Join the Movement</p>
+        <h2>Ready to move faster with your content?</h2>
+        <p class="section-sub">Whether you're a brand looking to ship better video or a creator who wants a reliable network, FlashCut is built to help you win.</p>
+      </div>
+      <div class="hero-ctas">
+        <a href="booking.html" class="btn-primary">Join FlashCut</a>
+        <a href="contact.html" class="btn-ghost">Become a Creator</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a href="index.html" class="logo">Flash<span>Cut</span></a>
+        <p>Shoot. Edit. Deliver.<br />In 10 Minutes.</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h5>Company</h5>
+          <a href="index.html">Home</a>
+          <a href="contact.html">Contact</a>
+          <a href="#">Careers</a>
+          <a href="#">Press</a>
+        </div>
+        <div class="footer-col">
+          <h5>Services</h5>          <a href="portfolio.html">Portfolio</a>          <a href="pricing.html">Pricing</a>
+          <a href="how-it-works.html">How It Works</a>
+          <a href="#">Events</a>
+        </div>
+        <div class="footer-col">
+          <h5>Connect</h5>
+          <a href="#">Instagram</a>
+          <a href="#">TikTok</a>
+          <a href="#">YouTube</a>
+        </div>
+        <div class="footer-col">
+          <div class="social-label">Follow Us</div>
+          <div class="social-row">
+            <a href="https://www.instagram.com/_flash.cut.studio_?igsh=bDd1OG16b3BtMDg1" class="social-btn instagram" target="_blank" rel="noopener" aria-label="Instagram">
+              <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+            </a>
+            <a href="#" class="social-btn facebook" aria-label="Facebook">
+              <svg viewBox="0 0 24 24"><path d="M24 12.073C24 5.404 18.627 0 12 0S0 5.404 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.971h-1.513c-1.491 0-1.956.931-1.956 1.886v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
+            </a>
+            <a href="#" class="social-btn youtube" aria-label="YouTube">
+              <svg viewBox="0 0 24 24"><path d="M23.495 6.205a3.007 3.007 0 00-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 00.527 6.205a31.247 31.247 0 00-.522 5.805 31.247 31.247 0 00.522 5.783 3.007 3.007 0 002.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 002.088-2.088 31.247 31.247 0 00.5-5.783 31.247 31.247 0 00-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
+            </a>
+            <a href="#" class="social-btn tiktok" aria-label="TikTok">
+              <svg viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 FlashCut. All rights reserved.</p>
+      <div class="footer-legal">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+      </div>
+    </div>
+  </footer>
+
+  <nav class="nav-mobile"></nav>
+  <script src="nav.js"></script>
+</body>
+</html>

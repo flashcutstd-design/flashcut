@@ -1,0 +1,81 @@
+# ════════════════════════════════════════════════════════
+#  FlashCut .gitignore — Flask + HTML/CSS/JS project
+#  Node.js / Next.js are NOT used — block everything
+# ════════════════════════════════════════════════════════
+
+# ── Node / Next.js (NOT used — block permanently) ────────
+node_modules/
+.next/
+.nuxt/
+.cache/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+yarn.lock
+package-lock.json
+package.json
+tsconfig.json
+next.config.js
+postcss.config.js
+tailwind.config.js
+next-env.d.ts
+src/
+
+# ── Python ────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+
+# ── Virtual environments ──────────────────────────────────
+venv/
+.venv/
+env/
+ENV/
+
+# ── Secrets — NEVER commit ───────────────────────────────
+.env
+.env.*
+*.env.local
+*.env.production
+*.env.staging
+*.pem
+*.key
+*.cert
+*.p12
+*.pfx
+
+# ── Vercel ────────────────────────────────────────────────
+.vercel/
+
+
+# ── Database (Render uses /data persistent disk) ─────────
+data/
+*.db
+*.sqlite3
+
+# ── Local uploads (use ImageKit in production) ────────────
+uploads/
+!uploads/.gitkeep
+
+# ── OS files ─────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ── Editor / IDE ──────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*.suo
+.project
+.classpath

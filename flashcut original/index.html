@@ -1,0 +1,1720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FlashCut — Shoot. Edit. Deliver. In 10 Minutes.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<style>
+    /* ─────────────────────────────────────────
+   RESET & BASE
+───────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0a0808;
+  --bg2: #0f0a0a;
+  --surface: rgba(255,255,255,0.04);
+  --border: rgba(255,255,255,0.08);
+  --accent: #d4a017;
+  --accent2: #b8860b;
+  --text: #f0f0f0;
+  --text-muted: rgba(240,240,240,0.5);
+  --radius: 16px;
+  --radius-lg: 24px;
+  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --font-body: 'Inter', sans-serif;
+  --font-display: 'Playfair Display', serif;
+  --nav-h: 72px;
+  --mobile-nav-h: 64px;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* Global bg atmosphere — canvas handles this now */
+body::before { display: none; }
+
+#bg-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Noise grain overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+}
+
+/* All sections sit above the bg layers */
+nav, section, footer { position: relative; z-index: 1; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: rgba(212,160,23,0.4); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(212,160,23,0.7); }
+
+/* ─────────────────────────────────────────
+   GLASS UTILITY
+───────────────────────────────────────── */
+.glass {
+  background: rgba(212,160,23,0.04);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(212,160,23,0.12);
+}
+
+/* ─────────────────────────────────────────
+   TYPOGRAPHY UTILITIES
+───────────────────────────────────────── */
+.eyebrow {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 64px;
+}
+
+.section-header h2 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 700;
+  line-height: 1.15;
+  margin-bottom: 16px;
+}
+
+.section-sub {
+  color: var(--text-muted);
+  font-size: 1.05rem;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+/* ─────────────────────────────────────────
+   BUTTONS
+───────────────────────────────────────── */
+.btn-primary, .btn-ghost, .btn-nav {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 32px;
+  border-radius: 50px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: var(--transition);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #f0f0f0;
+  box-shadow: 0 0 32px rgba(212,160,23,0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 48px rgba(212,160,23,0.5);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+.btn-ghost:hover {
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.35);
+  transform: translateY(-2px);
+}
+
+.btn-nav {
+  padding: 10px 22px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #f0f0f0;
+  font-size: 0.82rem;
+}
+
+.btn-nav:hover { transform: translateY(-1px); }
+
+.full { width: 100%; }
+
+/* ─────────────────────────────────────────
+   DESKTOP NAV
+───────────────────────────────────────── */
+.nav-desktop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  height: var(--nav-h);
+  transition: var(--transition);
+}
+
+.nav-desktop.scrolled {
+  background: rgba(10,8,8,0.85);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 32px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+}
+
+.logo {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.logo span { color: var(--accent); }
+
+.nav-links {
+  display: flex;
+  list-style: none;
+  gap: 36px;
+}
+
+.nav-links a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 500;
+  transition: color var(--transition);
+}
+
+.nav-links a:hover { color: var(--text); }
+
+/* ─────────────────────────────────────────
+   FLOATING STICKERS
+───────────────────────────────────────── */
+.stickers {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.sticker {
+  position: absolute;
+  color: rgba(212, 160, 23, 0.5);
+  filter: drop-shadow(0 0 8px rgba(212,160,23,0.35));
+}
+
+.sticker svg { display: block; }
+
+/* Individual positions & sizes — left side */
+.s1  { width: 52px; top: 18%;  left: 4%;   animation: float1 6s   ease-in-out infinite; }
+.s2  { width: 44px; top: 42%;  left: 7%;   animation: float2 7s   ease-in-out infinite; }
+.s3  { width: 38px; top: 65%;  left: 3%;   animation: float3 5.5s ease-in-out infinite; }
+.s4  { width: 32px; top: 28%;  left: 11%;  animation: float1 8s   ease-in-out infinite reverse; }
+.s9  { width: 36px; top: 8%;   left: 8%;   animation: float2 6s   ease-in-out infinite reverse; }
+.s10 { width: 42px; top: 55%;  left: 13%;  animation: float3 7s   ease-in-out infinite; }
+.s11 { width: 34px; top: 80%;  left: 6%;   animation: float1 9s   ease-in-out infinite; }
+
+/* Right side */
+.s5  { width: 48px; top: 20%;  right: 5%;  animation: float2 6.5s ease-in-out infinite; }
+.s6  { width: 40px; top: 50%;  right: 3%;  animation: float3 7.5s ease-in-out infinite reverse; }
+.s7  { width: 46px; top: 70%;  right: 7%;  animation: float1 5s   ease-in-out infinite; }
+.s8  { width: 28px; top: 35%;  right: 12%; animation: float2 9s   ease-in-out infinite reverse; }
+.s12 { width: 42px; top: 8%;   right: 8%;  animation: float3 6s   ease-in-out infinite; }
+.s13 { width: 50px; top: 58%;  right: 13%; animation: float1 8s   ease-in-out infinite reverse; }
+.s14 { width: 38px; top: 82%;  right: 5%;  animation: float2 7s   ease-in-out infinite; }
+.s15 { width: 30px; top: 44%;  right: 17%; animation: float3 5s   ease-in-out infinite reverse; }
+.s16 { width: 34px; top: 14%;  right: 18%; animation: float1 10s  ease-in-out infinite; }
+
+/* Fill-in stickers */
+.s17 { width: 50px; top: 5%;   left: 20%;  animation: float2 7s   ease-in-out infinite; }
+.s18 { width: 32px; top: 74%;  left: 17%;  animation: float3 6s   ease-in-out infinite reverse; }
+.s19 { width: 38px; top: 90%;  left: 10%;  animation: float1 8s   ease-in-out infinite; }
+.s20 { width: 40px; top: 48%;  left: 19%;  animation: float2 5.5s ease-in-out infinite reverse; }
+.s21 { width: 30px; top: 5%;   right: 22%; animation: float3 9s   ease-in-out infinite; }
+.s22 { width: 44px; top: 90%;  right: 14%; animation: float1 6.5s ease-in-out infinite reverse; }
+.s23 { width: 36px; top: 62%;  right: 20%; animation: float2 8s   ease-in-out infinite; }
+.s24 { width: 30px; top: 32%;  left: 19%;  animation: float3 7.5s ease-in-out infinite; }
+.s25 { width: 46px; top: 5%;   left: 46%;  transform: translateX(-50%); animation: float1 11s  ease-in-out infinite reverse; }
+.s26 { width: 32px; top: 76%;  right: 20%; animation: float2 6s   ease-in-out infinite reverse; }
+
+@keyframes float1 {
+  0%, 100% { transform: translateY(0px)   rotate(-4deg); }
+  50%       { transform: translateY(-18px) rotate(4deg);  }
+}
+@keyframes float2 {
+  0%, 100% { transform: translateY(0px)   rotate(6deg);  }
+  50%       { transform: translateY(-22px) rotate(-6deg); }
+}
+@keyframes float3 {
+  0%, 100% { transform: translateY(0px)   rotate(0deg);  }
+  33%       { transform: translateY(-14px) rotate(5deg);  }
+  66%       { transform: translateY(-8px)  rotate(-4deg); }
+}
+
+/* Hide stickers on small screens so they don't crowd */
+@media (max-width: 768px) {
+  .s1, .s2, .s4, .s7, .s8, .s9, .s10, .s11, .s12, .s13, .s15, .s16,
+  .s17, .s18, .s19, .s20, .s21, .s22, .s23, .s24, .s25, .s26 { display: none; }
+  .s3 { left: 1%; width: 30px; }
+  .s5 { right: 1%; width: 32px; }
+  .s6 { right: 2%; width: 28px; }
+  .s14 { right: 3%; width: 26px; }
+}
+
+/* ─────────────────────────────────────────
+   HERO
+───────────────────────────────────────── */
+.hero {
+  position: relative;
+  height: 100vh;
+  min-height: 700px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 50%, rgba(212,160,23,0.14) 0%, transparent 65%);
+  pointer-events: none;
+  animation: heroGlow 6s ease-in-out infinite alternate;
+}
+
+@keyframes heroGlow {
+  from { opacity: 0.7; }
+  to   { opacity: 1; }
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 0 24px;
+  max-width: 800px;
+  animation: fadeUp 1s ease both;
+}
+
+.hero-eyebrow {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 24px;
+}
+
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(3.5rem, 8vw, 7rem);
+  font-weight: 700;
+  line-height: 1.05;
+  margin-bottom: 8px;
+  min-height: 2.2em;
+}
+
+.hero-title .cursor {
+  display: inline-block;
+  color: var(--accent);
+  animation: blink 0.75s step-end infinite;
+  font-weight: 300;
+  margin-left: 2px;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+.hero-title span { color: var(--accent); }
+
+.hero-tagline {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 3.5vw, 2.8rem);
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+  font-style: italic;
+}
+
+.hero-sub {
+  color: var(--text-muted);
+  font-size: 1.05rem;
+  max-width: 520px;
+  margin: 0 auto 40px;
+}
+
+.hero-ctas {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.hero-scroll-hint {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+}
+
+.hero-scroll-hint span {
+  display: block;
+  width: 2px;
+  height: 48px;
+  background: linear-gradient(to bottom, var(--accent), transparent);
+  margin: 0 auto;
+  animation: scrollPulse 2s ease infinite;
+}
+
+/* ─────────────────────────────────────────
+   STATS
+───────────────────────────────────────── */
+.stats {
+  padding: 80px 32px;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.stat-card {
+  border-radius: var(--radius-lg);
+  padding: 48px 32px;
+  text-align: center;
+  transition: transform var(--transition);
+}
+
+.stat-card:hover { transform: translateY(-6px); }
+
+.stat-number {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 700;
+  color: white;
+  line-height: 1;
+}
+
+.stat-suffix {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3vw, 2.5rem);
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.stat-label {
+  margin-top: 12px;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+
+/* ─────────────────────────────────────────
+   HOW IT WORKS
+───────────────────────────────────────── */
+.how-it-works {
+  padding: 120px 32px;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.steps {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+}
+
+.step {
+  flex: 1;
+  border-radius: var(--radius-lg);
+  padding: 48px 32px;
+  text-align: center;
+  position: relative;
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.step:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 24px 64px rgba(212,160,23,0.12);
+}
+
+.step-num {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+
+.step-icon {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+}
+
+.step h3 {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  margin-bottom: 12px;
+}
+
+.step p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+
+.step-connector {
+  width: 40px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.step-connector::after {
+  content: '';
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+}
+
+/* ─────────────────────────────────────────
+   PORTFOLIO
+───────────────────────────────────────── */
+.portfolio {
+  padding: 120px 32px;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.portfolio-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: auto auto;
+  gap: 16px;
+}
+
+.portfolio-item.large {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+
+.portfolio-thumb {
+  width: 100%;
+  height: 100%;
+  min-height: 220px;
+  border-radius: var(--radius-lg);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.portfolio-item.large .portfolio-thumb { min-height: 460px; }
+
+.portfolio-thumb::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.3);
+  transition: var(--transition);
+  z-index: 1;
+}
+
+.portfolio-thumb:hover::before { background: rgba(0,0,0,0.1); }
+
+.portfolio-thumb:hover .portfolio-overlay { opacity: 1; transform: translateY(0); }
+
+.portfolio-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 24px;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  z-index: 2;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: var(--transition);
+}
+
+.portfolio-tag {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+
+.portfolio-overlay h4 {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+}
+
+/* ─────────────────────────────────────────
+   PRICING
+───────────────────────────────────────── */
+.pricing {
+  padding: 120px 32px;
+  background: linear-gradient(180deg, transparent, rgba(212,160,23,0.03), transparent);
+}
+
+.pricing-grid {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.pricing-card {
+  border-radius: var(--radius-lg);
+  padding: 48px 36px;
+  position: relative;
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.pricing-card:hover { transform: translateY(-8px); }
+
+.pricing-card.featured {
+  border-color: rgba(212,160,23,0.35);
+  background: rgba(212,160,23,0.06);
+  box-shadow: 0 0 64px rgba(212,160,23,0.12);
+  transform: scale(1.04);
+}
+
+.pricing-card.featured:hover { transform: scale(1.04) translateY(-8px); }
+
+.plan-badge {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #f0f0f0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 6px 20px;
+  border-radius: 50px;
+  white-space: nowrap;
+}
+
+.plan-name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+
+.plan-price {
+  font-family: var(--font-display);
+  font-size: 3.5rem;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.currency {
+  font-size: 1.5rem;
+  vertical-align: top;
+  margin-top: 10px;
+  display: inline-block;
+  color: var(--accent);
+}
+
+.plan-cycle {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-bottom: 32px;
+}
+
+.plan-features {
+  list-style: none;
+  margin-bottom: 36px;
+}
+
+.plan-features li {
+  padding: 10px 0;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.plan-features li::before {
+  content: '✓';
+  color: var(--accent);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* ─────────────────────────────────────────
+   TESTIMONIALS
+───────────────────────────────────────── */
+.testimonials {
+  padding: 120px 32px;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.testimonial-track {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.testimonial-card {
+  border-radius: var(--radius-lg);
+  padding: 40px;
+  transition: transform var(--transition);
+}
+
+.testimonial-card:hover { transform: translateY(-6px); }
+
+.stars {
+  color: var(--accent);
+  font-size: 1rem;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+}
+
+.testimonial-card p {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: var(--text-muted);
+  margin-bottom: 28px;
+  font-style: italic;
+}
+
+.testimonial-author {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.testimonial-author strong {
+  display: block;
+  font-size: 0.9rem;
+  margin-bottom: 2px;
+}
+
+.testimonial-author span {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+/* ─────────────────────────────────────────
+   CTA BANNER
+───────────────────────────────────────── */
+.cta-banner {
+  padding: 80px 32px;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.cta-banner-inner {
+  border-radius: var(--radius-lg);
+  padding: 96px 64px;
+  text-align: center;
+  background: linear-gradient(135deg, rgba(212,160,23,0.08), rgba(212,160,23,0.02)) !important;
+  border-color: rgba(212,160,23,0.2) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-banner-inner::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(ellipse, rgba(212,160,23,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.cta-banner-inner h2 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 20px;
+}
+
+.cta-banner-inner h2 span { color: var(--accent); }
+
+.cta-banner-inner p {
+  color: var(--text-muted);
+  font-size: 1.05rem;
+  margin-bottom: 40px;
+}
+
+/* ─────────────────────────────────────────
+   FOOTER
+───────────────────────────────────────── */
+.footer {
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  padding: 80px 32px 32px;
+  margin-bottom: 0;
+}
+
+.footer-inner {
+  max-width: 1280px;
+  margin: 0 auto 64px;
+  display: flex;
+  justify-content: space-between;
+  gap: 64px;
+  flex-wrap: wrap;
+}
+
+.footer-brand .logo {
+  display: inline-block;
+  margin-bottom: 16px;
+}
+
+.footer-brand p {
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  line-height: 1.8;
+}
+
+.footer-links {
+  display: flex;
+  gap: 64px;
+  flex-wrap: wrap;
+}
+
+.footer-col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.footer-col h5 {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.footer-col a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.88rem;
+  transition: color var(--transition);
+}
+
+.footer-col a:hover { color: var(--accent); }
+
+.footer-bottom {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.footer-bottom p {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+.footer-legal {
+  display: flex;
+  gap: 24px;
+}
+
+.footer-legal a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.82rem;
+  transition: color var(--transition);
+}
+
+.footer-legal a:hover { color: var(--text); }
+
+/* ─────────────────────────────────────────
+   MOBILE BOTTOM NAV
+───────────────────────────────────────── */
+.nav-mobile {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--mobile-nav-h);
+  background: rgba(10,8,8,0.92);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border-top: 1px solid var(--border);
+  z-index: 1000;
+  padding: 0 8px;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.nav-mobile {
+  display: none;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.mobile-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.65rem;
+  font-weight: 500;
+  padding: 8px 12px;
+  border-radius: 12px;
+  transition: var(--transition);
+  flex: 1;
+}
+
+.mobile-nav-item svg {
+  width: 20px;
+  height: 20px;
+}
+
+.mobile-nav-item.active, .mobile-nav-item:hover {
+  color: var(--accent);
+}
+
+.mobile-nav-item.cta {
+  color: var(--accent);
+}
+
+.mobile-nav-item.cta svg {
+  width: 28px;
+  height: 28px;
+}
+
+/* ─────────────────────────────────────────
+   ANIMATIONS
+───────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scrollPulse {
+  0%, 100% { opacity: 1; transform: scaleY(1); transform-origin: top; }
+  50% { opacity: 0.3; transform: scaleY(0.5); transform-origin: top; }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ─────────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .steps {
+    flex-direction: column;
+    gap: 16px;
+  }
+  .step-connector { display: none; }
+  .pricing-grid { grid-template-columns: 1fr; max-width: 480px; }
+  .pricing-card.featured { transform: none; }
+  .pricing-card.featured:hover { transform: translateY(-8px); }
+}
+
+@media (max-width: 768px) {
+  .nav-desktop { display: none; }
+  .nav-mobile { display: flex; }
+
+  body { padding-bottom: var(--mobile-nav-h); }
+
+  .stats-grid { grid-template-columns: 1fr; }
+  .testimonial-track { grid-template-columns: 1fr; }
+  .portfolio-grid {
+    grid-template-columns: 1fr;
+  }
+  .portfolio-item.large {
+    grid-column: span 1;
+    grid-row: span 1;
+  }
+  .portfolio-item.large .portfolio-thumb { min-height: 280px; }
+  .portfolio-overlay { opacity: 1; transform: translateY(0); }
+
+  .footer-inner { flex-direction: column; gap: 40px; }
+  .footer-links { gap: 32px; }
+  .footer-bottom { flex-direction: column; text-align: center; }
+
+  .cta-banner-inner { padding: 64px 32px; }
+
+  .hero-title { font-size: clamp(2.8rem, 10vw, 4rem); }
+}
+
+@media (max-width: 480px) {
+  .hero-ctas { flex-direction: column; align-items: center; }
+  .hero-ctas a { width: 100%; max-width: 320px; }
+  .section-header { margin-bottom: 40px; }
+  .how-it-works, .portfolio, .testimonials, .pricing { padding: 80px 16px; }
+  .stats { padding: 60px 16px; }
+}
+
+</style>
+<body>
+
+  <!-- Animated BG Canvas -->
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- DESKTOP NAV -->
+  <nav class="nav-desktop" id="navbar"></nav>
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+
+    <!-- Floating Stickers -->
+    <div class="stickers">
+
+      <!-- LEFT SIDE -->
+      <div class="sticker s1">
+        <!-- Camera -->
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="4" y="18" width="56" height="38" rx="6" stroke="currentColor" stroke-width="3"/>
+          <circle cx="32" cy="37" r="11" stroke="currentColor" stroke-width="3"/>
+          <circle cx="32" cy="37" r="5" fill="currentColor" opacity="0.3"/>
+          <path d="M20 18v-4a2 2 0 012-2h8a2 2 0 012 2v4" stroke="currentColor" stroke-width="3"/>
+          <circle cx="50" cy="26" r="3" fill="currentColor"/>
+        </svg>
+      </div>
+
+      <div class="sticker s2">
+        <!-- Film Strip -->
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="4" y="12" width="56" height="40" rx="4" stroke="currentColor" stroke-width="3"/>
+          <rect x="4" y="20" width="56" height="24" stroke="currentColor" stroke-width="2"/>
+          <rect x="10" y="14" width="6" height="6" rx="1" fill="currentColor" opacity="0.5"/>
+          <rect x="24" y="14" width="6" height="6" rx="1" fill="currentColor" opacity="0.5"/>
+          <rect x="38" y="14" width="6" height="6" rx="1" fill="currentColor" opacity="0.5"/>
+          <rect x="10" y="44" width="6" height="6" rx="1" fill="currentColor" opacity="0.5"/>
+          <rect x="24" y="44" width="6" height="6" rx="1" fill="currentColor" opacity="0.5"/>
+          <rect x="38" y="44" width="6" height="6" rx="1" fill="currentColor" opacity="0.5"/>
+        </svg>
+      </div>
+
+      <div class="sticker s3">
+        <!-- Aperture -->
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="32" cy="32" r="26" stroke="currentColor" stroke-width="3"/>
+          <circle cx="32" cy="32" r="10" stroke="currentColor" stroke-width="2"/>
+          <line x1="32" y1="6"  x2="24" y2="22" stroke="currentColor" stroke-width="2.5"/>
+          <line x1="58" y1="32" x2="42" y2="26" stroke="currentColor" stroke-width="2.5"/>
+          <line x1="44" y1="56" x2="36" y2="42" stroke="currentColor" stroke-width="2.5"/>
+          <line x1="6"  y1="32" x2="22" y2="38" stroke="currentColor" stroke-width="2.5"/>
+          <line x1="20" y1="8"  x2="28" y2="22" stroke="currentColor" stroke-width="2.5"/>
+          <line x1="56" y1="44" x2="42" y2="38" stroke="currentColor" stroke-width="2.5"/>
+        </svg>
+      </div>
+
+      <div class="sticker s4">
+        <!-- Play Button -->
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="32" cy="32" r="28" stroke="currentColor" stroke-width="3"/>
+          <polygon points="26,20 48,32 26,44" fill="currentColor" opacity="0.7"/>
+        </svg>
+      </div>
+
+      <!-- RIGHT SIDE -->
+      <div class="sticker s5">
+        <!-- iPhone / Phone -->
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="16" y="4" width="32" height="56" rx="8" stroke="currentColor" stroke-width="3"/>
+          <circle cx="32" cy="52" r="3" fill="currentColor" opacity="0.5"/>
+          <rect x="24" y="10" width="16" height="3" rx="1.5" fill="currentColor" opacity="0.4"/>
+          <rect x="20" y="18" width="24" height="24" rx="3" stroke="currentColor" stroke-width="2" opacity="0.5"/>
+          <circle cx="32" cy="30" r="5" fill="currentColor" opacity="0.3"/>
+        </svg>
+      </div>
+
+      <div class="sticker s6">
+        <!-- Lightning / Flash -->
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="36,4 14,36 30,36 28,60 50,28 34,28" stroke="currentColor" stroke-width="3" stroke-linejoin="round" fill="currentColor" opacity="0.25"/>
+        </svg>
+      </div>
+
+      <div class="sticker s7">
+        <!-- Clapperboard -->
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="4" y="20" width="56" height="38" rx="4" stroke="currentColor" stroke-width="3"/>
+          <rect x="4" y="10" width="56" height="14" rx="4" stroke="currentColor" stroke-width="3"/>
+          <line x1="16" y1="10" x2="12" y2="24" stroke="currentColor" stroke-width="2.5"/>
+          <line x1="28" y1="10" x2="24" y2="24" stroke="currentColor" stroke-width="2.5"/>
+          <line x1="40" y1="10" x2="36" y2="24" stroke="currentColor" stroke-width="2.5"/>
+          <line x1="52" y1="10" x2="48" y2="24" stroke="currentColor" stroke-width="2.5"/>
+        </svg>
+      </div>
+
+      <div class="sticker s8">
+        <!-- Star / Sparkle -->
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M32 4 L36 28 L60 32 L36 36 L32 60 L28 36 L4 32 L28 28 Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" fill="currentColor" opacity="0.2"/>
+        </svg>
+      </div>
+
+      <!-- EXTRA LEFT -->
+      <div class="sticker s9">
+        <!-- Lens / Circle focus -->
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="32" cy="32" r="28" stroke="currentColor" stroke-width="2.5"/>
+          <circle cx="32" cy="32" r="18" stroke="currentColor" stroke-width="2"/>
+          <circle cx="32" cy="32" r="8"  stroke="currentColor" stroke-width="2"/>
+          <circle cx="32" cy="32" r="2"  fill="currentColor"/>
+        </svg>
+      </div>
+
+      <div class="sticker s10">
+        <!-- Scissors / Edit -->
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="16" cy="20" r="8" stroke="currentColor" stroke-width="2.5"/>
+          <circle cx="16" cy="44" r="8" stroke="currentColor" stroke-width="2.5"/>
+          <line x1="22" y1="26" x2="56" y2="8"  stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="22" y1="38" x2="56" y2="56" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="38" y1="32" x2="56" y2="32" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.4"/>
+        </svg>
+      </div>
+
+      <div class="sticker s11">
+        <!-- Wifi / Signal (upload) -->
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 28 Q32 6 56 28"  stroke="currentColor" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <path d="M16 38 Q32 22 48 38" stroke="currentColor" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <path d="M24 48 Q32 40 40 48" stroke="currentColor" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <circle cx="32" cy="54" r="3" fill="currentColor"/>
+        </svg>
+      </div>
+
+      <!-- EXTRA RIGHT -->
+      <div class="sticker s12">
+        <!-- Timer / Clock -->
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="32" cy="36" r="24" stroke="currentColor" stroke-width="3"/>
+          <line x1="32" y1="36" x2="32" y2="20" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          <line x1="32" y1="36" x2="44" y2="42" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          <line x1="24" y1="8" x2="40" y2="8" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          <line x1="32" y1="8" x2="32" y2="12" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <div class="sticker s13">
+        <!-- Drone -->
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="22" y="26" width="20" height="12" rx="3" stroke="currentColor" stroke-width="2.5"/>
+          <line x1="22" y1="32" x2="8"  y2="32" stroke="currentColor" stroke-width="2.5"/>
+          <line x1="42" y1="32" x2="56" y2="32" stroke="currentColor" stroke-width="2.5"/>
+          <ellipse cx="8"  cy="32" rx="7" ry="4" stroke="currentColor" stroke-width="2"/>
+          <ellipse cx="56" cy="32" rx="7" ry="4" stroke="currentColor" stroke-width="2"/>
+          <line x1="28" y1="38" x2="26" y2="46" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <line x1="36" y1="38" x2="38" y2="46" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="26" cy="47" r="2" fill="currentColor" opacity="0.5"/>
+          <circle cx="38" cy="47" r="2" fill="currentColor" opacity="0.5"/>
+        </svg>
+      </div>
+
+      <div class="sticker s14">
+        <!-- Headphones -->
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 34 Q12 12 32 12 Q52 12 52 34" stroke="currentColor" stroke-width="3" fill="none"/>
+          <rect x="6"  y="34" width="12" height="18" rx="4" stroke="currentColor" stroke-width="2.5"/>
+          <rect x="46" y="34" width="12" height="18" rx="4" stroke="currentColor" stroke-width="2.5"/>
+        </svg>
+      </div>
+
+      <div class="sticker s15">
+        <!-- Diamond / Premium -->
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="32,4 58,24 48,60 16,60 6,24" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" fill="currentColor" opacity="0.12"/>
+          <polyline points="6,24 32,4 58,24 32,60 6,24" stroke="currentColor" stroke-width="2" opacity="0.5"/>
+          <line x1="6" y1="24" x2="58" y2="24" stroke="currentColor" stroke-width="2" opacity="0.4"/>
+          <line x1="16" y1="24" x2="32" y2="4"  stroke="currentColor" stroke-width="1.5" opacity="0.3"/>
+          <line x1="48" y1="24" x2="32" y2="4"  stroke="currentColor" stroke-width="1.5" opacity="0.3"/>
+        </svg>
+      </div>
+
+      <div class="sticker s16">
+        <!-- Music note -->
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M26 48 L26 18 L52 12 L52 42" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <circle cx="20" cy="50" r="7" stroke="currentColor" stroke-width="2.5"/>
+          <circle cx="46" cy="44" r="7" stroke="currentColor" stroke-width="2.5"/>
+        </svg>
+      </div>
+
+      <!-- FILL-IN STICKERS -->
+
+      <div class="sticker s17">
+        <!-- Video camera / Camcorder -->
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="4" y="18" width="38" height="28" rx="5" stroke="currentColor" stroke-width="2.5"/>
+          <polygon points="42,24 60,14 60,50 42,40" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" fill="currentColor" opacity="0.15"/>
+          <circle cx="18" cy="32" r="6" stroke="currentColor" stroke-width="2"/>
+        </svg>
+      </div>
+
+      <div class="sticker s18">
+        <!-- SD Card -->
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M14 4 L14 60 L50 60 L50 16 L38 4 Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+          <line x1="22" y1="4"  x2="22" y2="20" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+          <line x1="29" y1="4"  x2="29" y2="20" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+          <line x1="36" y1="4"  x2="36" y2="20" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+          <rect x="20" y="36" width="24" height="14" rx="2" stroke="currentColor" stroke-width="2" opacity="0.4"/>
+        </svg>
+      </div>
+
+      <div class="sticker s19">
+        <!-- Microphone -->
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="22" y="4" width="20" height="32" rx="10" stroke="currentColor" stroke-width="2.5"/>
+          <path d="M12 34 Q12 54 32 54 Q52 54 52 34" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <line x1="32" y1="54" x2="32" y2="62" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="24" y1="62" x2="40" y2="62" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <div class="sticker s20">
+        <!-- Eye / View -->
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 32 Q16 10 32 10 Q48 10 60 32 Q48 54 32 54 Q16 54 4 32Z" stroke="currentColor" stroke-width="2.5" fill="none"/>
+          <circle cx="32" cy="32" r="9" stroke="currentColor" stroke-width="2.5"/>
+          <circle cx="32" cy="32" r="4" fill="currentColor" opacity="0.4"/>
+        </svg>
+      </div>
+
+      <div class="sticker s21">
+        <!-- Cursor / Click -->
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="10,6 10,52 24,40 32,58 40,54 32,36 50,36" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" fill="currentColor" opacity="0.15"/>
+        </svg>
+      </div>
+
+      <div class="sticker s22">
+        <!-- Rocket -->
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M32 4 Q48 12 48 32 L48 44 L32 56 L16 44 L16 32 Q16 12 32 4Z" stroke="currentColor" stroke-width="2.5" fill="currentColor" opacity="0.1"/>
+          <circle cx="32" cy="28" r="7" stroke="currentColor" stroke-width="2"/>
+          <path d="M16 40 Q8 44 10 54 Q20 52 24 44" stroke="currentColor" stroke-width="2" fill="none"/>
+          <path d="M48 40 Q56 44 54 54 Q44 52 40 44" stroke="currentColor" stroke-width="2" fill="none"/>
+          <line x1="32" y1="52" x2="32" y2="62" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+        </svg>
+      </div>
+
+      <div class="sticker s23">
+        <!-- Colour palette -->
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M32 6 Q58 6 58 28 Q58 44 44 48 Q38 50 36 44 Q34 38 28 40 Q12 44 8 32 Q4 14 32 6Z" stroke="currentColor" stroke-width="2.5" fill="none"/>
+          <circle cx="20" cy="22" r="4" fill="currentColor" opacity="0.5"/>
+          <circle cx="32" cy="14" r="4" fill="currentColor" opacity="0.5"/>
+          <circle cx="44" cy="22" r="4" fill="currentColor" opacity="0.5"/>
+          <circle cx="46" cy="36" r="4" fill="currentColor" opacity="0.5"/>
+        </svg>
+      </div>
+
+      <div class="sticker s24">
+        <!-- Grid / Layout -->
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="4"  y="4"  width="24" height="24" rx="3" stroke="currentColor" stroke-width="2.5"/>
+          <rect x="36" y="4"  width="24" height="24" rx="3" stroke="currentColor" stroke-width="2.5"/>
+          <rect x="4"  y="36" width="24" height="24" rx="3" stroke="currentColor" stroke-width="2.5"/>
+          <rect x="36" y="36" width="24" height="24" rx="3" stroke="currentColor" stroke-width="2.5"/>
+        </svg>
+      </div>
+
+      <div class="sticker s25">
+        <!-- Infinity loop / reels -->
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 32 Q8 14 22 14 Q36 14 32 32 Q28 50 42 50 Q56 50 56 32 Q56 14 42 14 Q28 14 32 32 Q36 50 22 50 Q8 50 8 32Z" stroke="currentColor" stroke-width="2.5" fill="none"/>
+        </svg>
+      </div>
+
+      <div class="sticker s26">
+        <!-- Tag / Label -->
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M6 6 L6 34 L32 58 L58 32 L34 6 Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" fill="currentColor" opacity="0.1"/>
+          <circle cx="20" cy="20" r="5" stroke="currentColor" stroke-width="2.5"/>
+        </svg>
+      </div>
+
+    </div>
+
+    <div class="hero-content">
+      <p class="hero-eyebrow">Premium Content Production</p>
+      <h1 class="hero-title"><span id="typed-text"></span><span class="cursor">|</span></h1>
+      <p class="hero-tagline">In 10 Minutes.</p>
+      <p class="hero-sub">Professional video &amp; photo production — fully edited and ready to post before you leave the shoot.</p>
+      <div class="hero-ctas">
+        <a href="booking.html" class="btn-primary">Book a Shoot</a>
+        <a href="portfolio.html" class="btn-ghost">View Our Work</a>
+      </div>
+    </div>
+    <div class="hero-scroll-hint">
+      <span></span>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="hiw-home" id="how-it-works">
+    <div class="section-header">
+      <p class="eyebrow">The Process</p>
+      <h2>How It Works</h2>
+      <p class="section-sub">Five steps. One seamless experience. Files in 10 minutes.</p>
+    </div>
+
+    <div class="hiw-home-grid">
+
+      <div class="hiw-home-card glass">
+        <div class="hiw-home-num">01</div>
+        <div class="hiw-home-icon">&#x1F4C5;</div>
+        <h3>Book Your Shoot</h3>
+        <p>Pick a date, location, and style in under 3 minutes. Same-day slots available in 50+ cities.</p>
+        <ul class="hiw-home-bullets">
+          <li>Smart booking form</li>
+          <li>Instant availability</li>
+          <li>Any location</li>
+        </ul>
+      </div>
+
+      <div class="hiw-home-card glass">
+        <div class="hiw-home-num">02</div>
+        <div class="hiw-home-icon">&#x1F91D;</div>
+        <h3>Creator Assigned</h3>
+        <p>Our algorithm matches you with the best-fit creator for your style and goals — within seconds.</p>
+        <ul class="hiw-home-bullets">
+          <li>Smart crew matching</li>
+          <li>Pre-shoot brief call</li>
+          <li>Gear pre-packed</li>
+        </ul>
+      </div>
+
+      <div class="hiw-home-card glass">
+        <div class="hiw-home-num">03</div>
+        <div class="hiw-home-icon">&#x1F3AC;</div>
+        <h3>Professional Shoot</h3>
+        <p>Your creator arrives fully equipped. Cinematic gear, lighting, drone — you just show up.</p>
+        <ul class="hiw-home-bullets">
+          <li>4K cinematic gear</li>
+          <li>Director on set</li>
+          <li>Unlimited retakes</li>
+        </ul>
+      </div>
+
+      <div class="hiw-home-card glass">
+        <div class="hiw-home-num">04</div>
+        <div class="hiw-home-icon">&#x1F916;</div>
+        <h3>Editing</h3>
+        <p>While you wrap up on set, our AI cuts, color grades, syncs audio, and renders — in real time.</p>
+        <ul class="hiw-home-bullets">
+          <li>Auto scene selection</li>
+          <li>Cinematic color grade</li>
+          <li>Audio sync &amp; cleanup</li>
+        </ul>
+      </div>
+
+      <div class="hiw-home-card glass hiw-home-card--accent">
+        <div class="hiw-home-num">05</div>
+        <div class="hiw-home-icon">&#x26A1;</div>
+        <h3>Delivery in 10 Min</h3>
+        <p>Final files drop to your phone before you leave the set. Every format, every platform, ready to post.</p>
+        <ul class="hiw-home-bullets">
+          <li>9:16, 1:1, 16:9 exports</li>
+          <li>Direct to phone</li>
+          <li>Post immediately</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="hiw-home-cta">
+      <a href="how-it-works.html" class="btn-ghost">See Full Process &rarr;</a>
+    </div>
+  </section>
+
+  <!-- FINAL CTA BANNER -->
+  <section class="cta-banner" id="book">
+    <div class="cta-banner-inner glass">
+      <p class="eyebrow">Ready to Start?</p>
+      <h2>Your next shoot is<br /><span>10 minutes away.</span></h2>
+      <p>Join 340+ creators and brands who deliver faster with FlashCut.</p>
+      <div class="hero-ctas">
+        <a href="booking.html" class="btn-primary">Book a Shoot</a>
+        <a href="contact.html" class="btn-ghost">Talk to Us</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="c-cta-section">
+    <div class="c-container">
+      <h2>Ready to Create <span>Something Amazing?</span></h2>
+      <p>Our team is just a message away. Let's bring your vision to life.</p>
+      <a href="contact.html" class="cta-btn">Talk to Our Team &rarr;</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a href="#" class="logo">Flash<span>Cut</span></a>
+        <p>Shoot. Edit. Deliver.<br />In 10 Minutes.</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h5>Company</h5>
+          <a href="index.html">Home</a>
+          <a href="contact.html">Contact</a>
+          <a href="#">Careers</a>
+          <a href="#">Press</a>
+        </div>
+        <div class="footer-col">
+          <h5>Services</h5>
+          <a href="portfolio.html">Portfolio</a>
+          <a href="pricing.html">Pricing</a>
+          <a href="how-it-works.html">How It Works</a>
+          <a href="#">Events</a>
+        </div>
+        <div class="footer-col">
+          <h5>Connect</h5>
+          <a href="#">Instagram</a>
+          <a href="#">TikTok</a>
+          <a href="#">YouTube</a>
+        </div>
+        <div class="footer-col">
+          <div class="social-label">Follow Us</div>
+          <div class="social-row">
+            <a href="https://www.instagram.com/_flash.cut.studio_?igsh=bDd1OG16b3BtMDg1" class="social-btn instagram" target="_blank" rel="noopener" aria-label="Instagram">
+              <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+            </a>
+            <a href="#" class="social-btn facebook" aria-label="Facebook">
+              <svg viewBox="0 0 24 24"><path d="M24 12.073C24 5.404 18.627 0 12 0S0 5.404 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.971h-1.513c-1.491 0-1.956.931-1.956 1.886v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
+            </a>
+            <a href="#" class="social-btn youtube" aria-label="YouTube">
+              <svg viewBox="0 0 24 24"><path d="M23.495 6.205a3.007 3.007 0 00-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 00.527 6.205a31.247 31.247 0 00-.522 5.805 31.247 31.247 0 00.522 5.783 3.007 3.007 0 002.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 002.088-2.088 31.247 31.247 0 00.5-5.783 31.247 31.247 0 00-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
+            </a>
+            <a href="#" class="social-btn tiktok" aria-label="TikTok">
+              <svg viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 FlashCut. All rights reserved.</p>
+      <div class="footer-legal">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+      </div>
+    </div>
+  </footer>
+
+  <div class="booking-modal" id="bookingModal" aria-hidden="true">
+    <div class="booking-modal-backdrop" data-close-booking></div>
+    <div class="booking-modal-content glass">
+      <button type="button" class="booking-modal-close" aria-label="Close booking form">×</button>
+      <div class="booking-modal-header">
+        <p class="eyebrow">Book Your Shoot</p>
+        <h2>Complete the booking form</h2>
+        <p class="section-sub">Tell us your shoot goals, preferred date, and location so we can reserve your slot fast.</p>
+      </div>
+      <form class="booking-form" id="bookingForm">
+        <div class="booking-grid">
+          <div class="form-group">
+            <label class="form-label" for="booking-name">Full Name</label>
+            <input id="booking-name" class="form-input" type="text" name="name" placeholder="Jane Doe" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="booking-email">Email Address</label>
+            <input id="booking-email" class="form-input" type="email" name="email" placeholder="jane@example.com" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="booking-phone">Phone Number</label>
+            <input id="booking-phone" class="form-input" type="tel" name="phone" placeholder="+91 98765 43210" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="booking-date">Preferred Date</label>
+            <input id="booking-date" class="form-input" type="date" name="date" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="booking-time">Preferred Time</label>
+            <input id="booking-time" class="form-input" type="time" name="time" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="booking-location">Location / Studio</label>
+            <input id="booking-location" class="form-input" type="text" name="location" placeholder="Bangalore / Studio A" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="booking-package">Select Package</label>
+            <select id="booking-package" class="form-select" name="package">
+              <option value="starter">Starter - ₹999</option>
+              <option value="pro">Pro - ₹4,499</option>
+              <option value="business">Business - ₹11,999</option>
+            </select>
+          </div>
+          <div class="form-group form-group-full">
+            <label class="form-label" for="booking-details">Tell us more</label>
+            <textarea id="booking-details" class="form-textarea" name="details" placeholder="Share your shoot concept, number of people, and any special requests."></textarea>
+          </div>
+        </div>
+        <button type="submit" class="btn-primary full">Send Booking Request</button>
+        <p class="booking-note">Our team replies within 15 minutes to confirm your slot.</p>
+        <div class="booking-success" id="bookingSuccess" hidden>Thanks! Your booking request has been sent. We'll contact you shortly.</div>
+      </form>
+    </div>
+  </div>
+
+  <a href="https://wa.me/919876543210" class="wa-float" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+    <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  </a>
+
+  <!-- MOBILE BOTTOM NAV -->
+
+  <nav class="nav-mobile"></nav>
+  <script src="nav.js"></script>
+  <script src="script.js"></script>
+<script src="settings.js"></script>
+  <script>
+  /* ── Live Pricing from Flask ─────────────────────── */
+  (async function() {
+    var wrap = document.getElementById('home-pricing-cards');
+    if (!wrap) return;
+    try {
+      var plans = await (await fetch('/api/pricing')).json();
+      if (!plans.length) return;
+      wrap.innerHTML = plans.map(function(p) {
+        var pop = !!p.popular;
+        var pr  = Number(p.price).toLocaleString('en-IN');
+        var ft  = (p.features||'').split('|').map(function(f){ return '<li>'+f+'</li>'; }).join('');
+        return '<div class="hp-card'+(pop?' hp-popular':'') +'">'
+          +(pop?'<div class="hp-popular-tag">Most Popular</div>':'')
+          +'<div class="hp-card-name">'+p.plan_name+'</div>'
+          +'<div class="hp-price"><span class="hp-currency">&#8377;</span><span class="hp-amount">'+pr+'</span></div>'
+          +'<p class="hp-cycle">'+p.cycle+'</p>'
+          +'<p class="hp-desc">'+(p.description||'')+'</p>'
+          +'<ul class="hp-features">'+ft+'</ul>'
+          +'<a href="'+(pop?'booking.html':'pricing.html')+'" class="'+(pop?'hp-btn-primary':'hp-btn-outline')+'">'+(pop?'Book Now':'Get Started')+'</a>'
+          +'</div>';
+      }).join('');
+    } catch(e){ console.warn('Pricing load failed',e); }
+  })();
+
+  /* ── Live Reviews from Flask ─────────────────────── */
+  var AC=['#7c3aed','#0891b2','#dc2626','#059669','#d97706','#db2777'];
+  function ini(n){return n.trim().split(/\s+/).map(function(w){return w[0].toUpperCase();}).slice(0,2).join('');}
+  function sh(n){return '&#9733;'.repeat(n)+'<span style="opacity:.2">&#9733;</span>'.repeat(5-n);}
+
+  function loadReviews(){
+    var t=document.getElementById('testimonial-track'); if(!t) return;
+    fetch('/api/reviews')
+      .then(function(r){return r.json();})
+      .then(function(rv){
+        if(!rv.length){
+          t.innerHTML='<p style="text-align:center;color:rgba(240,240,240,.3);padding:32px;grid-column:span 3">No reviews yet — be the first!</p>';
+          return;
+        }
+        t.innerHTML=rv.map(function(r,i){
+          var col=AC[i%AC.length],ini2=ini(r.name);
+          return '<div class="testimonial-card glass">'
+            +'<div class="stars" style="color:#f59e0b;font-size:1.05rem;letter-spacing:2px;margin-bottom:14px">'+sh(r.rating)+'</div>'
+            +'<p style="font-size:.95rem;line-height:1.8;color:rgba(240,240,240,.6);margin-bottom:22px;font-style:italic">&ldquo;'+r.review+'&rdquo;</p>'
+            +'<div class="testimonial-author">'
+            +'<div class="avatar" style="background:'+col+'">'+ini2+'</div>'
+            +'<div><strong style="display:block;font-size:.9rem;margin-bottom:2px">'+r.name+'</strong>'
+            +(r.role?'<span style="font-size:.78rem;color:rgba(240,240,240,.5)">'+r.role+'</span>':'')
+            +'</div></div></div>';
+        }).join('');
+      })
+      .catch(function(){ console.warn('Reviews load failed'); });
+  }
+  loadReviews();
+
+  /* ── Live Portfolio from Flask ───────────────────── */
+  (async function(){
+    var grid=document.getElementById('home-portfolio-grid'); if(!grid) return;
+    try{
+      var items=await(await fetch('/api/portfolio')).json();
+      // Only show items that have a video URL
+      var videos=items.filter(function(item){ return item.video_url && item.video_url.trim()!==''; });
+      if(!videos.length) return; // hide section entirely if no videos yet
+      grid.innerHTML=videos.slice(0,5).map(function(item,i){
+        var large=(i===0);
+        var bg=item.thumb_color?'background:linear-gradient(135deg,'+item.thumb_color+')':'background:#1a0a0a';
+        var vid='<video src="'+item.video_url+'" muted loop playsinline preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:.4s" onmouseenter="this.style.opacity=1;this.currentTime=0;this.play()" onmouseleave="this.style.opacity=0;this.pause()"></video>';
+        return '<div class="portfolio-item'+(large?' large':'')+'">'
+          +'<div class="portfolio-thumb" style="'+bg+'">'
+          +vid
+          +'<div class="portfolio-overlay glass">'
+          +'<span class="portfolio-tag">'+(item.tag||'')+'</span>'
+          +'<h4>'+item.title+'</h4>'
+          +'</div></div></div>';
+      }).join('');
+    }catch(e){ console.warn('Portfolio load failed',e); }
+  })();
+
+  /* ── Star Rating ──────────────────────────────────── */
+  (function(){
+    var stars=document.querySelectorAll('.star'),
+        lbl=document.getElementById('starLabel'),
+        hid=document.getElementById('reviewRating');
+    if(!stars.length) return;
+    var LBLS=['','Terrible','Poor','Average','Great','Excellent!'],sel=0,drag=false;
+    function lit(n){stars.forEach(function(s,i){s.classList.toggle('lit',i<n);s.classList.toggle('hov',i===n-1);});if(lbl){lbl.textContent=n?LBLS[n]:'Tap or drag to rate';lbl.classList.toggle('rated',n>0);}}
+    function pick(n){sel=n;if(hid)hid.value=n;lit(n);}
+    function vf(e){var pt=e.touches?e.touches[0]:e;for(var i=0;i<stars.length;i++){var r=stars[i].getBoundingClientRect();if(pt.clientX>=r.left&&pt.clientX<=r.right&&pt.clientY>=r.top&&pt.clientY<=r.bottom)return i+1;}return null;}
+    stars.forEach(function(s){
+      s.addEventListener('mouseenter',function(){if(!drag)lit(+s.dataset.v);});
+      s.addEventListener('mouseleave',function(){if(!drag)lit(sel);});
+      s.addEventListener('click',function(){pick(+s.dataset.v);});
+      s.addEventListener('mousedown',function(){drag=true;pick(+s.dataset.v);});
+    });
+    document.addEventListener('mouseup',function(){drag=false;});
+    document.addEventListener('mousemove',function(e){if(!drag)return;var v=vf(e);if(v){lit(v);if(hid)hid.value=v;}});
+    var wr=document.getElementById('starRating');
+    if(wr){
+      wr.addEventListener('touchstart',function(e){drag=true;var v=vf(e);if(v)pick(v);},{passive:true});
+      wr.addEventListener('touchmove',function(e){var v=vf(e);if(v){lit(v);if(hid)hid.value=v;}},{passive:true});
+      wr.addEventListener('touchend',function(){drag=false;var v=+(hid&&hid.value||0);if(v)pick(v);},{passive:true});
+    }
+  })();
+
+  /* ── Review form submit → Flask ──────────────────── */
+  var rf=document.getElementById('reviewForm');
+  if(rf){
+    rf.addEventListener('submit',function(e){
+      e.preventDefault();
+      var btn=document.getElementById('reviewSubmitBtn'),
+          res=document.getElementById('reviewResult'),
+          rat=+(document.getElementById('reviewRating')||{value:0}).value,
+          nam=(document.getElementById('reviewName')||{value:''}).value.trim(),
+          rol=(document.getElementById('reviewRole')||{value:''}).value.trim(),
+          rev=(document.getElementById('reviewText')||{value:''}).value.trim();
+      if(rat<1){res.className='review-form-result err';res.textContent='Please select a star rating first.';res.style.display='block';return;}
+      btn.textContent='Submitting\u2026';btn.disabled=true;
+      fetch('/api/reviews',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({name:nam,role:rol,rating:rat,review:rev})})
+        .then(function(r){return r.json();})
+        .then(function(d){
+          res.style.display='block';
+          if(d.ok){
+            res.className='review-form-result ok';
+            res.textContent='\uD83C\uDF89 '+d.message;
+            rf.reset();
+            if(document.getElementById('reviewRating'))document.getElementById('reviewRating').value='0';
+            document.querySelectorAll('.star').forEach(function(s){s.classList.remove('lit','hov');});
+            var sl=document.getElementById('starLabel');
+            if(sl){sl.textContent='Tap or drag to rate';sl.classList.remove('rated');}
+            var rc=document.getElementById('reviewChars');if(rc)rc.textContent='0';
+            setTimeout(loadReviews,500);
+          } else {
+            res.className='review-form-result err';
+            res.textContent=d.error||'Something went wrong.';
+          }
+          btn.textContent='Submit Review';btn.disabled=false;
+        })
+        .catch(function(){
+          res.className='review-form-result err';
+          res.style.display='block';
+          res.textContent='Could not connect. Is Flask running?';
+          btn.textContent='Submit Review';btn.disabled=false;
+        });
+    });
+  }
+  /* ── Char counter ─────────────────────────────────── */
+  var rt=document.getElementById('reviewText');
+  if(rt)rt.addEventListener('input',function(){var rc=document.getElementById('reviewChars');if(rc)rc.textContent=this.value.length;});
+  </script>
+</body>
+</html>

@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Book Your FlashCut Shoot</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='52' font-size='52'>⚡</text></svg>" />
+  <meta name="description" content="Book your FlashCut shoot — professional video production with editing delivered in 10 minutes." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body.booking-page { background: var(--bg); }
+
+    /* ─── BOOKING CONTAINER ─── */
+    .booking-wrapper {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 100px 32px 80px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: start;
+    }
+
+    .booking-form-section { grid-column: 1; }
+    .booking-summary-section { grid-column: 2; position: sticky; top: 100px; }
+
+    /* ─── PROGRESS INDICATOR ─── */
+    .progress-indicator {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 40px;
+      gap: 12px;
+    }
+
+    .progress-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .progress-circle {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      transition: all var(--transition);
+    }
+
+    .progress-step.active .progress-circle {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+      box-shadow: 0 0 16px rgba(212,160,23,0.4);
+    }
+
+    .progress-step.completed .progress-circle {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .progress-label { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; text-align: center; }
+    .progress-step.active .progress-label { color: var(--text); }
+
+    /* ─── FORM STEPS ─── */
+    .booking-form {
+      display: grid;
+      gap: 30px;
+    }
+
+    .form-step {
+      display: none;
+      animation: fadeIn 0.3s ease-in;
+    }
+
+    .form-step.active { display: block; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    .form-step h2 {
+      font-size: 1.6rem;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+
+    .form-step > p {
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      font-size: 0.95rem;
+    }
+
+    /* ─── FORM GROUPS ─── */
+    .form-group { margin-bottom: 24px; }
+    .form-group label { display: block; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); margin-bottom: 8px; }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 13px 16px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.95rem;
+      transition: border-color var(--transition), box-shadow var(--transition);
+      outline: none;
+    }
+
+    .form-group input::placeholder,
+    .form-group select::placeholder,
+    .form-group textarea::placeholder {
+      color: rgba(255,255,255,0.3);
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(212,160,23,0.15);
+    }
+
+    .form-group textarea { resize: vertical; min-height: 100px; }
+
+    /* ─── REQUIRED STAR ─── */
+    .req { color: var(--accent); margin-left: 3px; }
+
+    /* ─── FIELD ERROR ─── */
+    .field-error {
+      font-size: 0.75rem;
+      color: #ff4d4d;
+      margin-top: 5px;
+      display: none;
+    }
+    .field-error.visible { display: block; }
+    .form-group input.invalid,
+    .form-group select.invalid,
+    .form-group textarea.invalid {
+      border-color: #ff4d4d !important;
+      box-shadow: 0 0 0 3px rgba(255,77,77,0.15) !important;
+    }
+
+    /* ─── STEP ERROR BANNER ─── */
+    .step-error-banner {
+      display: none;
+      background: rgba(255,77,77,0.1);
+      border: 1px solid rgba(255,77,77,0.3);
+      border-radius: 10px;
+      padding: 11px 16px;
+      font-size: 0.85rem;
+      color: #ff4d4d;
+      margin-bottom: 20px;
+    }
+    .step-error-banner.visible { display: block; }
+
+    /* ─── PHONE INPUT WITH PREFIX ─── */
+    .phone-wrap {
+      display: flex;
+      gap: 0;
+    }
+    .phone-prefix {
+      display: flex;
+      align-items: center;
+      padding: 13px 14px;
+      background: rgba(212,160,23,0.1);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-right: none;
+      border-radius: 12px 0 0 12px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .phone-wrap input {
+      border-radius: 0 12px 12px 0 !important;
+      flex: 1;
+    }
+    .phone-wrap input:focus { z-index: 1; }
+
+    /* ─── PRICING PACKAGE SELECT ─── */
+    .package-cards {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    .package-option {
+      padding: 16px 18px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      background: rgba(255,255,255,0.02);
+      cursor: pointer;
+      transition: all var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .package-option:hover {
+      border-color: rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.04);
+    }
+    .package-option.selected {
+      border-color: var(--accent);
+      background: rgba(212,160,23,0.1);
+      box-shadow: 0 0 14px rgba(212,160,23,0.18);
+    }
+    .package-option.popular-pkg {
+      border-color: rgba(212,160,23,0.35);
+    }
+    .pkg-left { display: flex; flex-direction: column; gap: 3px; }
+    .pkg-name { font-size: 0.95rem; font-weight: 600; color: var(--text); }
+    .pkg-desc { font-size: 0.78rem; color: var(--text-muted); line-height: 1.4; }
+    .pkg-badge {
+      font-size: 0.62rem; font-weight: 700; padding: 2px 9px; border-radius: 50px;
+      background: var(--accent); color: #fff; text-transform: uppercase;
+      letter-spacing: 0.07em; white-space: nowrap; align-self: flex-start;
+    }
+    .pkg-price {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .pkg-price small { font-size: 0.75rem; color: var(--text-muted); }
+    .package-option.selected .pkg-price { color: var(--accent); }
+
+    /* ─── GRID LAYOUT ─── */
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 900px) { .form-row { grid-template-columns: 1fr; } }
+
+    /* ─── CATEGORY GRID ─── */
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .category-option {
+      padding: 16px 14px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.02);
+      cursor: pointer;
+      text-align: center;
+      transition: all var(--transition);
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .category-option:hover {
+      border-color: rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.05);
+    }
+
+    .category-option.selected {
+      border-color: var(--accent);
+      background: rgba(212,160,23,0.1);
+      color: var(--accent);
+      box-shadow: 0 0 12px rgba(212,160,23,0.2);
+    }
+
+    /* ─── CALENDAR ─── */
+    .calendar-wrapper {
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 16px;
+      background: rgba(255,255,255,0.02);
+    }
+
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .calendar-nav {
+      display: flex;
+      gap: 12px;
+    }
+
+    .calendar-nav button {
+      width: 32px;
+      height: 32px;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all var(--transition);
+    }
+
+    .calendar-nav button:hover {
+      border-color: var(--accent);
+      background: rgba(212,160,23,0.1);
+    }
+
+    .calendar-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 8px; }
+    .weekday { text-align: center; font-size: 0.75rem; font-weight: 600; color: var(--text-muted); padding: 8px 0; }
+
+    .calendar-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+
+    .calendar-day {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all var(--transition);
+      background: rgba(255,255,255,0.02);
+      color: var(--text-muted);
+    }
+
+    .calendar-day:hover:not(.disabled) {
+      background: rgba(255,255,255,0.05);
+      border-color: rgba(255,255,255,0.1);
+    }
+
+    .calendar-day.selected {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+      box-shadow: 0 0 12px rgba(212,160,23,0.3);
+    }
+
+    .calendar-day.disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    /* ─── TIME PICKER ─── */
+    .time-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .time-option {
+      padding: 12px 8px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      background: rgba(255,255,255,0.02);
+      text-align: center;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      transition: all var(--transition);
+    }
+
+    .time-option:hover { border-color: rgba(255,255,255,0.15); background: rgba(255,255,255,0.05); }
+    .time-option.selected { border-color: var(--accent); background: rgba(212,160,23,0.1); color: var(--accent); box-shadow: 0 0 12px rgba(212,160,23,0.2); }
+
+    /* ─── LOCATION MAP ─── */
+    .location-map {
+      width: 100%;
+      height: 240px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.02);
+      margin-bottom: 16px;
+    }
+
+    .location-map iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      filter: grayscale(1) invert(0.88) contrast(1.2);
+    }
+
+    /* ─── BOOKING SUMMARY ─── */
+    .booking-summary {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 32px;
+      position: relative;
+    }
+
+    .summary-header {
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding-bottom: 16px;
+      margin-bottom: 24px;
+    }
+
+    .summary-header h3 {
+      font-size: 1.05rem;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .summary-header p {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      font-size: 0.9rem;
+    }
+
+    .summary-item span:first-child { color: var(--text-muted); }
+    .summary-item span:last-child { color: var(--text); font-weight: 500; }
+
+    .summary-item.empty { color: var(--text-muted); }
+
+    .price-section {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .price-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      font-size: 0.95rem;
+    }
+
+    .price-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .price-amount { color: var(--accent); }
+
+    /* ─── FORM BUTTONS ─── */
+    .form-buttons {
+      display: flex;
+      gap: 16px;
+      margin-top: 32px;
+    }
+
+    .btn-secondary {
+      flex: 1;
+      padding: 14px 24px;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 12px;
+      background: transparent;
+      color: var(--text);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .btn-secondary:hover {
+      border-color: rgba(255,255,255,0.35);
+      background: rgba(255,255,255,0.06);
+    }
+
+    .btn-primary {
+      flex: 1;
+      padding: 14px 24px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border: none;
+      border-radius: 12px;
+      color: #f0f0f0;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition);
+      box-shadow: 0 0 24px rgba(212,160,23,0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 40px rgba(212,160,23,0.5);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* ─── SUCCESS STATE ─── */
+    .booking-success-state {
+      display: none;
+      text-align: center;
+      padding: 60px 32px;
+    }
+
+    .booking-success-state.active { display: block; }
+
+    .success-icon {
+      font-size: 4rem;
+      margin-bottom: 24px;
+      animation: scaleIn 0.4s ease-out;
+    }
+
+    @keyframes scaleIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+    .success-text h2 { margin-bottom: 12px; }
+    .success-text p { color: var(--text-muted); margin-bottom: 32px; }
+
+    .success-details {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 32px;
+      text-align: left;
+    }
+
+    .success-detail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      font-size: 0.9rem;
+    }
+
+    .success-detail-row span:first-child { color: var(--text-muted); }
+    .success-detail-row span:last-child { color: var(--text); font-weight: 500; }
+
+    .success-actions { display: flex; gap: 16px; }
+    .success-actions a, .success-actions button {
+      flex: 1;
+      padding: 14px 24px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 600;
+      text-align: center;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .success-actions a:first-child, .success-actions button:first-child {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.2);
+      color: var(--text);
+    }
+
+    .success-actions a:last-child, .success-actions button:last-child {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border: none;
+      color: #f0f0f0;
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 1000px) {
+      .booking-wrapper { grid-template-columns: 1fr; }
+      .booking-form-section, .booking-summary-section { grid-column: auto; }
+      .booking-summary-section { position: relative; top: auto; }
+      .time-grid { grid-template-columns: repeat(3, 1fr); }
+      .category-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 600px) {
+      .booking-wrapper { padding: 80px 16px 60px; }
+      .time-grid { grid-template-columns: repeat(2, 1fr); }
+      .success-actions { flex-direction: column; }
+    }
+  </style>
+</head>
+<body class="booking-page">
+  <nav class="nav-desktop" id="navbar"></nav>
+
+  <div class="booking-wrapper">
+    <!-- FORM SECTION -->
+    <div class="booking-form-section">
+      <!-- PROGRESS INDICATOR -->
+      <div class="progress-indicator">
+        <div class="progress-step active" id="progress1">
+          <div class="progress-circle">1</div>
+          <div class="progress-label">Details</div>
+        </div>
+        <div class="progress-step" id="progress2">
+          <div class="progress-circle">2</div>
+          <div class="progress-label">Shoot Info</div>
+        </div>
+        <div class="progress-step" id="progress3">
+          <div class="progress-circle">3</div>
+          <div class="progress-label">Date & Time</div>
+        </div>
+        <div class="progress-step" id="progress4">
+          <div class="progress-circle">4</div>
+          <div class="progress-label">Location</div>
+        </div>
+      </div>
+
+      <!-- FORM -->
+      <form class="booking-form" id="bookingForm">
+        <!-- STEP 1: PERSONAL DETAILS -->
+        <div class="form-step active" data-step="1">
+          <h2>Let's Start</h2>
+          <p>Tell us who you are</p>
+          <div class="step-error-banner" id="err-step1">Please fill in all required fields correctly.</div>
+
+          <div class="form-group">
+            <label>Full Name <span class="req">*</span></label>
+            <input type="text" id="f-fullName" name="fullName" placeholder="Priya Sharma" required autocomplete="name" />
+            <div class="field-error" id="err-fullName">Please enter your full name.</div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Email Address <span class="req">*</span></label>
+              <input type="email" id="f-email" name="email" placeholder="priya@example.com" required autocomplete="email" />
+              <div class="field-error" id="err-email">Please enter a valid email address.</div>
+            </div>
+            <div class="form-group">
+              <label>Phone Number <span class="req">*</span></label>
+              <div class="phone-wrap">
+                <div class="phone-prefix">🇮🇳 +91</div>
+                <input type="tel" id="f-phone" name="phone"
+                  placeholder="98765 43210"
+                  required
+                  maxlength="10"
+                  pattern="[6-9][0-9]{9}"
+                  autocomplete="tel"
+                  inputmode="numeric" />
+              </div>
+              <div class="field-error" id="err-phone">Enter a valid 10-digit Indian mobile number.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 2: SHOOT INFORMATION -->
+        <div class="form-step" data-step="2">
+          <h2>Your Shoot</h2>
+          <p>What are we creating?</p>
+          <div class="step-error-banner" id="err-step2">Please select a shoot type and a pricing package.</div>
+
+          <div class="form-group">
+            <label>Shoot Type <span class="req">*</span></label>
+            <div class="category-grid">
+              <div class="category-option" data-type="reel">🎬 Reel</div>
+              <div class="category-option" data-type="product">📦 Product</div>
+              <div class="category-option" data-type="event">🎪 Event</div>
+              <div class="category-option" data-type="wedding">💍 Wedding</div>
+              <div class="category-option" data-type="corporate">🏢 Corporate</div>
+              <div class="category-option" data-type="realestate">🏠 Real Estate</div>
+            </div>
+            <input type="hidden" id="f-shootType" name="shootType" required />
+            <div class="field-error" id="err-shootType">Please select a shoot type.</div>
+          </div>
+
+          <!-- PRICING PACKAGE -->
+          <div class="form-group" style="margin-top: 8px;">
+            <label>Select Package <span class="req">*</span></label>
+            <div class="package-cards" id="packageCards">
+              <!-- Populated from /api/pricing -->
+              <div style="color:rgba(240,240,240,0.4);font-size:.85rem;padding:12px">Loading packages…</div>
+            </div>
+            <input type="hidden" id="f-package" name="package" required />
+            <div class="field-error" id="err-package">Please select a pricing package.</div>
+          </div>
+
+          <div class="form-group" style="margin-top: 8px;">
+            <label>Additional Notes</label>
+            <textarea name="notes" id="f-notes" placeholder="Tell us more about your vision, style, deliverables..."></textarea>
+          </div>
+        </div>
+
+        <!-- STEP 3: DATE & TIME -->
+        <div class="form-step" data-step="3">
+          <h2>When</h2>
+          <p>Pick your shoot date and time</p>
+          <div class="step-error-banner" id="err-step3">Please select both a date and a time slot.</div>
+
+          <div class="form-group">
+            <label>Select Date <span class="req">*</span></label>
+            <div class="calendar-wrapper">
+              <div class="calendar-header">
+                <span id="calendarMonth">January 2026</span>
+                <div class="calendar-nav">
+                  <button type="button" id="prevMonth">&lt;</button>
+                  <button type="button" id="nextMonth">&gt;</button>
+                </div>
+              </div>
+              <div class="calendar-weekdays">
+                <div class="weekday">Sun</div>
+                <div class="weekday">Mon</div>
+                <div class="weekday">Tue</div>
+                <div class="weekday">Wed</div>
+                <div class="weekday">Thu</div>
+                <div class="weekday">Fri</div>
+                <div class="weekday">Sat</div>
+              </div>
+              <div class="calendar-days" id="calendarDays"></div>
+            </div>
+            <input type="hidden" name="date" required />
+          </div>
+
+          <div class="form-group">
+            <label>Select Time <span class="req">*</span></label>
+            <div class="time-grid" id="timeGrid">
+              <div class="time-option" data-time="09:00">09:00 AM</div>
+              <div class="time-option" data-time="11:00">11:00 AM</div>
+              <div class="time-option" data-time="01:00">01:00 PM</div>
+              <div class="time-option" data-time="03:00">03:00 PM</div>
+              <div class="time-option" data-time="05:00">05:00 PM</div>
+              <div class="time-option" data-time="07:00">07:00 PM</div>
+            </div>
+            <input type="hidden" name="time" required />
+          </div>
+        </div>
+
+        <!-- STEP 4: LOCATION -->
+        <div class="form-step" data-step="4">
+          <h2>Location</h2>
+          <p>Where will we shoot?</p>
+          <div class="step-error-banner" id="err-step4">Please enter your shoot location.</div>
+
+          <div class="form-group">
+            <label>Full Address <span class="req">*</span></label>
+            <input type="text" id="f-location" name="location" placeholder="42 MG Road, Bengaluru, Karnataka 560001" required autocomplete="street-address" />
+            <div class="field-error" id="err-location">Please enter your shoot location.</div>
+          </div>
+
+          <div class="location-map">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3024.1234567890!2d-74.0060!3d40.7128!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDDCsDQyJzQ2LjEiTiA3NMKwMDAnMjEuNiJX!5e0!3m2!1sen!2sus!4v1234567890" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
+        </div>
+
+        <!-- FORM BUTTONS -->
+        <div class="form-buttons">
+          <button type="button" class="btn-secondary" id="prevBtn" style="display:none;">Back</button>
+          <button type="button" class="btn-primary" id="nextBtn">Continue</button>
+        </div>
+      </form>
+
+      <!-- SUCCESS STATE -->
+      <div class="booking-success-state" id="successState">
+        <div class="success-icon">✓</div>
+        <div class="success-text">
+          <h2>Booking Confirmed!</h2>
+          <p>Your shoot is scheduled. We'll reach out within 2 hours to confirm details and answer any questions.</p>
+        </div>
+        <div class="success-details" id="successDetails"></div>
+        <div class="success-actions">
+          <a href="index.html">Return Home</a>
+          <a href="contact.html">Contact Support</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUMMARY SECTION -->
+    <div class="booking-summary-section">
+      <div class="booking-summary">
+        <div class="summary-header">
+          <h3>Booking Summary</h3>
+          <p>Real-time price estimate</p>
+        </div>
+
+        <div id="summaryContent">
+          <div class="summary-item empty">Fill in details to see your estimate</div>
+        </div>
+
+        <div class="price-section">
+          <div class="price-total">
+            <span>Total Estimate</span>
+            <span class="price-amount" id="totalPrice">—</span>
+          </div>
+        </div>
+
+        <p style="margin-top: 16px; color: var(--text-muted); font-size: 0.8rem; text-align: center;">
+          Prices are estimates and may vary based on shoot length and deliverables.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a href="index.html" class="logo">Flash<span>Cut</span></a>
+        <p>Shoot. Edit. Deliver.<br />In 10 Minutes.</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h5>Company</h5>
+          <a href="index.html">Home</a>
+          <a href="contact.html">Contact</a>
+          <a href="#">Careers</a>
+          <a href="#">Press</a>
+        </div>
+        <div class="footer-col">
+          <h5>Services</h5>          <a href="portfolio.html">Portfolio</a>          <a href="pricing.html">Pricing</a>
+          <a href="how-it-works.html">How It Works</a>
+          <a href="#">Events</a>
+        </div>
+        <div class="footer-col">
+          <h5>Connect</h5>
+          <a href="#">Instagram</a>
+          <a href="#">TikTok</a>
+          <a href="#">YouTube</a>
+        </div>
+        <div class="footer-col">
+          <div class="social-label">Follow Us</div>
+          <div class="social-row">
+            <a href="https://www.instagram.com/_flash.cut.studio_?igsh=bDd1OG16b3BtMDg1" class="social-btn instagram" target="_blank" rel="noopener" aria-label="Instagram">
+              <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+            </a>
+            <a href="#" class="social-btn facebook" aria-label="Facebook">
+              <svg viewBox="0 0 24 24"><path d="M24 12.073C24 5.404 18.627 0 12 0S0 5.404 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.971h-1.513c-1.491 0-1.956.931-1.956 1.886v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
+            </a>
+            <a href="#" class="social-btn youtube" aria-label="YouTube">
+              <svg viewBox="0 0 24 24"><path d="M23.495 6.205a3.007 3.007 0 00-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 00.527 6.205a31.247 31.247 0 00-.522 5.805 31.247 31.247 0 00.522 5.783 3.007 3.007 0 002.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 002.088-2.088 31.247 31.247 0 00.5-5.783 31.247 31.247 0 00-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
+            </a>
+            <a href="#" class="social-btn tiktok" aria-label="TikTok">
+              <svg viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 FlashCut. All rights reserved.</p>
+      <div class="footer-legal">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+      </div>
+    </div>
+  </footer>
+
+  <nav class="nav-mobile"></nav>
+
+  <script src="nav.js"></script>
+  <script>
+  // ── Load live packages from /api/pricing ─────────────
+  (async function loadPackages() {
+    const wrap = document.getElementById('packageCards');
+    if (!wrap) return;
+    try {
+      const res   = await fetch('/api/pricing');
+      const plans = await res.json();
+      if (!plans.length) return;
+      wrap.innerHTML = plans.map(p => {
+        const isPopular = !!p.popular;
+        const fmtPrice  = Number(p.price).toLocaleString('en-IN');
+        const feats = (p.features || '').split('|').slice(0,3).join(' · ');
+        return `
+        <div class="package-option${isPopular ? ' popular-pkg' : ''}"
+             data-pkg="${p.plan_key}" data-price="${p.price}">
+          <div class="pkg-left">
+            ${isPopular ? '<span class="pkg-badge">Most Popular</span>' : ''}
+            <div class="pkg-name">${p.plan_name}</div>
+            <div class="pkg-desc">${feats}</div>
+          </div>
+          <div class="pkg-price">₹${fmtPrice} <small>/ ${p.cycle}</small></div>
+        </div>`;
+      }).join('');
+
+      wrap.querySelectorAll('.package-option').forEach(opt => {
+        opt.addEventListener('click', () => {
+          wrap.querySelectorAll('.package-option').forEach(o => o.classList.remove('selected'));
+          opt.classList.add('selected');
+          if (window._bookingFormData) {
+            window._bookingFormData.package      = opt.dataset.pkg;
+            window._bookingFormData.packagePrice = parseInt(opt.dataset.price);
+            window._bookingFormData.packageLabel = opt.querySelector('.pkg-name').textContent.trim();
+          }
+          document.getElementById('f-package').value = opt.dataset.pkg;
+          const errPkg = document.getElementById('err-package');
+          if (errPkg) errPkg.classList.remove('visible');
+          if (typeof updateSummary === 'function') updateSummary();
+        });
+      });
+    } catch(e) { console.warn('Package load failed', e); }
+  })();
+  </script>
+  <script>
+    const form         = document.getElementById('bookingForm');
+    const nextBtn      = document.getElementById('nextBtn');
+    const prevBtn      = document.getElementById('prevBtn');
+    const summaryContent = document.getElementById('summaryContent');
+    const successState = document.getElementById('successState');
+
+    let currentStep = 1;
+    const totalSteps = 4;
+
+    const formData = {
+      fullName: '', email: '', phone: '',
+      shootType: '', package: '', packageLabel: '', packagePrice: 0,
+      notes: '', date: '', time: '', location: ''
+    };
+    window._bookingFormData = formData; // expose for dynamic package loader
+
+    // ── PACKAGE PRICES (also used by shoot type fallback) ──
+    const packagePrices = { starter: 999, pro: 4499, business: 11999 };
+    const shootTypePrices = {
+      reel: 999, product: 1499, event: 4499,
+      wedding: 11999, corporate: 4499, realestate: 2999
+    };
+
+    // ── SUMMARY & PRICE ────────────────────────────────────
+    function updateSummary() {
+      let html = '', hasData = false;
+
+      if (formData.fullName) {
+        html += `<div class="summary-item"><span>Name</span><span>${formData.fullName}</span></div>`;
+        hasData = true;
+      }
+      if (formData.phone) {
+        html += `<div class="summary-item"><span>Phone</span><span>+91 ${formData.phone}</span></div>`;
+        hasData = true;
+      }
+      if (formData.shootType) {
+        const lbl = formData.shootType.charAt(0).toUpperCase() + formData.shootType.slice(1);
+        html += `<div class="summary-item"><span>Shoot Type</span><span>${lbl}</span></div>`;
+        hasData = true;
+      }
+      if (formData.packageLabel) {
+        html += `<div class="summary-item"><span>Package</span><span>${formData.packageLabel}</span></div>`;
+        hasData = true;
+      }
+      if (formData.date) {
+        html += `<div class="summary-item"><span>Date</span><span>${formData.date}</span></div>`;
+        hasData = true;
+      }
+      if (formData.time) {
+        html += `<div class="summary-item"><span>Time</span><span>${formData.time}</span></div>`;
+        hasData = true;
+      }
+      if (formData.location) {
+        html += `<div class="summary-item"><span>Location</span><span>${formData.location.split(',')[0]}</span></div>`;
+        hasData = true;
+      }
+
+      if (!hasData) html = '<div class="summary-item empty">Fill in details to see your estimate</div>';
+      summaryContent.innerHTML = html;
+      updatePrice();
+    }
+
+    function updatePrice() {
+      // Package price is the final price — no add-ons
+      const base = formData.packagePrice > 0
+        ? formData.packagePrice
+        : (shootTypePrices[formData.shootType] || 0);
+      const fmt = v => v > 0 ? `₹${v.toLocaleString('en-IN')}` : '—';
+      document.getElementById('totalPrice').textContent = fmt(base);
+    }
+
+    // ── STEP DISPLAY ───────────────────────────────────────
+    function showStep(step) {
+      document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+      document.querySelector(`[data-step="${step}"]`).classList.add('active');
+      document.querySelectorAll('.progress-step').forEach((el, idx) => {
+        el.classList.remove('active', 'completed');
+        if (idx + 1 < step) el.classList.add('completed');
+        if (idx + 1 === step) el.classList.add('active');
+      });
+      prevBtn.style.display = step > 1 ? 'block' : 'none';
+      nextBtn.textContent   = step === totalSteps ? 'Confirm My Booking' : 'Continue';
+      // Clear error banners on step change
+      document.querySelectorAll('.step-error-banner').forEach(b => b.classList.remove('visible'));
+    }
+
+    // ── FIELD HELPERS ──────────────────────────────────────
+    function setError(id, show) {
+      const el = document.getElementById(id);
+      if (el) el.classList.toggle('visible', show);
+    }
+    function setInvalid(el, invalid) {
+      if (el) el.classList.toggle('invalid', invalid);
+    }
+    function showBanner(id) {
+      const el = document.getElementById(id);
+      if (el) { el.classList.add('visible'); el.scrollIntoView({behavior:'smooth', block:'nearest'}); }
+    }
+
+    // ── PER-STEP VALIDATION ────────────────────────────────
+    function validateStep(step) {
+      let ok = true;
+
+      if (step === 1) {
+        const name  = document.getElementById('f-fullName');
+        const email = document.getElementById('f-email');
+        const phone = document.getElementById('f-phone');
+
+        const nameOk  = name.value.trim().length >= 2;
+        const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim());
+        const phoneOk = /^[6-9][0-9]{9}$/.test(phone.value.trim());
+
+        setInvalid(name,  !nameOk);  setError('err-fullName', !nameOk);
+        setInvalid(email, !emailOk); setError('err-email',    !emailOk);
+        setInvalid(phone, !phoneOk); setError('err-phone',    !phoneOk);
+
+        if (!nameOk || !emailOk || !phoneOk) { showBanner('err-step1'); ok = false; }
+        else {
+          formData.fullName = name.value.trim();
+          formData.email    = email.value.trim();
+          formData.phone    = phone.value.trim();
+          document.getElementById('err-step1').classList.remove('visible');
+        }
+      }
+
+      if (step === 2) {
+        const typeOk = !!formData.shootType;
+        const pkgOk  = !!formData.package;
+        setError('err-shootType', !typeOk);
+        setError('err-package',   !pkgOk);
+        if (!typeOk || !pkgOk) { showBanner('err-step2'); ok = false; }
+        else document.getElementById('err-step2').classList.remove('visible');
+      }
+
+      if (step === 3) {
+        const dateOk = !!formData.date;
+        const timeOk = !!formData.time;
+        if (!dateOk || !timeOk) { showBanner('err-step3'); ok = false; }
+        else document.getElementById('err-step3').classList.remove('visible');
+      }
+
+      if (step === 4) {
+        const loc = document.getElementById('f-location');
+        const locOk = loc.value.trim().length >= 5;
+        setInvalid(loc, !locOk); setError('err-location', !locOk);
+        if (!locOk) { showBanner('err-step4'); ok = false; }
+        else {
+          formData.location = loc.value.trim();
+          document.getElementById('err-step4').classList.remove('visible');
+        }
+      }
+
+      return ok;
+    }
+
+    // ── SHOOT TYPE SELECTION ───────────────────────────────
+    document.querySelectorAll('.category-option').forEach(opt => {
+      opt.addEventListener('click', () => {
+        document.querySelectorAll('.category-option').forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        formData.shootType = opt.dataset.type;
+        document.getElementById('f-shootType').value = formData.shootType;
+        setError('err-shootType', false);
+        setInvalid(document.getElementById('f-shootType'), false);
+        updateSummary();
+      });
+    });
+
+    // ── PACKAGE SELECTION ──────────────────────────────────
+    document.querySelectorAll('.package-option').forEach(opt => {
+      opt.addEventListener('click', () => {
+        document.querySelectorAll('.package-option').forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        formData.package      = opt.dataset.pkg;
+        formData.packagePrice = parseInt(opt.dataset.price);
+        formData.packageLabel = opt.querySelector('.pkg-name').textContent.trim();
+        document.getElementById('f-package').value = formData.package;
+        setError('err-package', false);
+        updateSummary();
+      });
+    });
+
+    // ── TIME SELECTION ─────────────────────────────────────
+    document.querySelectorAll('.time-option').forEach(opt => {
+      opt.addEventListener('click', () => {
+        document.querySelectorAll('.time-option').forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        formData.time = opt.dataset.time;
+        form.querySelector('input[name="time"]').value = formData.time;
+        document.getElementById('err-step3').classList.remove('visible');
+        updateSummary();
+      });
+    });
+
+    // ── PHONE — digits only, auto-strip non-numeric ────────
+    document.getElementById('f-phone').addEventListener('input', (e) => {
+      e.target.value = e.target.value.replace(/\D/g, '').slice(0, 10);
+      formData.phone = e.target.value;
+      setInvalid(e.target, false);
+      setError('err-phone', false);
+      updateSummary();
+    });
+
+    // ── LIVE FIELD TRACKING ────────────────────────────────
+    document.getElementById('f-fullName').addEventListener('input', (e) => {
+      formData.fullName = e.target.value;
+      setInvalid(e.target, false); setError('err-fullName', false);
+      updateSummary();
+    });
+    document.getElementById('f-email').addEventListener('input', (e) => {
+      formData.email = e.target.value;
+      setInvalid(e.target, false); setError('err-email', false);
+    });
+    document.getElementById('f-location').addEventListener('input', (e) => {
+      formData.location = e.target.value;
+      setInvalid(e.target, false); setError('err-location', false);
+      updateSummary();
+    });
+
+    // ── CALENDAR ──────────────────────────────────────────
+    let currentCalendarMonth = new Date();
+
+    function renderCalendar() {
+      const year  = currentCalendarMonth.getFullYear();
+      const month = currentCalendarMonth.getMonth();
+      const monthNames = ['January','February','March','April','May','June',
+                          'July','August','September','October','November','December'];
+      document.getElementById('calendarMonth').textContent = `${monthNames[month]} ${year}`;
+
+      const firstDay    = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const calendarDays = document.getElementById('calendarDays');
+      calendarDays.innerHTML = '';
+
+      for (let i = 0; i < firstDay; i++) {
+        const el = document.createElement('div');
+        el.className = 'calendar-day disabled';
+        calendarDays.appendChild(el);
+      }
+
+      const today = new Date(); today.setHours(0,0,0,0);
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dayEl   = document.createElement('div');
+        dayEl.className = 'calendar-day';
+        dayEl.textContent = day;
+        const cellDate = new Date(year, month, day);
+        if (cellDate < today) {
+          dayEl.classList.add('disabled');
+        } else {
+          dayEl.addEventListener('click', () => {
+            document.querySelectorAll('.calendar-day').forEach(d => d.classList.remove('selected'));
+            dayEl.classList.add('selected');
+            formData.date = `${monthNames[month]} ${day}, ${year}`;
+            form.querySelector('input[name="date"]').value = formData.date;
+            document.getElementById('err-step3').classList.remove('visible');
+            updateSummary();
+          });
+        }
+        calendarDays.appendChild(dayEl);
+      }
+    }
+
+    document.getElementById('prevMonth').addEventListener('click', (e) => {
+      e.preventDefault();
+      currentCalendarMonth.setMonth(currentCalendarMonth.getMonth() - 1);
+      renderCalendar();
+    });
+    document.getElementById('nextMonth').addEventListener('click', (e) => {
+      e.preventDefault();
+      currentCalendarMonth.setMonth(currentCalendarMonth.getMonth() + 1);
+      renderCalendar();
+    });
+
+    // ── NEXT / SUBMIT ──────────────────────────────────────
+    nextBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+
+      if (!validateStep(currentStep)) return;
+
+      if (currentStep === totalSteps) {
+        // Submit
+        nextBtn.textContent = 'Confirming…';
+        nextBtn.disabled    = true;
+
+        const notes = document.getElementById('f-notes');
+        const payload = {
+          name:       formData.fullName,
+          email:      formData.email,
+          phone:      '+91' + formData.phone,
+          shoot_date: formData.date,
+          shoot_time: formData.time,
+          location:   formData.location,
+          shoot_type: formData.shootType,
+          package:    formData.packageLabel || formData.package,
+          notes:      notes ? notes.value.trim() : ''
+        };
+
+        // ── 1. Save to Flask / Supabase ───────────────────
+        try {
+          const res = await fetch('/api/booking', {
+            method:  'POST',
+            headers: {'Content-Type': 'application/json'},
+            body:    JSON.stringify(payload),
+          });
+          const d = await res.json();
+          if (!d.ok) {
+            nextBtn.textContent = 'Continue';
+            nextBtn.disabled    = false;
+            alert(d.error || 'Booking failed. Please try again.');
+            return;
+          }
+        } catch(e) {
+          nextBtn.textContent = 'Continue';
+          nextBtn.disabled    = false;
+          alert('Could not reach server. Is Flask running?');
+          return;
+        }
+
+        // ── 2. Send email via Formspree (fire & forget) ───
+        const total = formData.packagePrice > 0
+          ? formData.packagePrice
+          : (shootTypePrices[formData.shootType] || 0);
+
+        fetch('https://formspree.io/f/xwlkrnjp', {
+          method:  'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            // Formspree special fields
+            _subject: `New FlashCut Booking — ${formData.fullName} (${formData.shootType})`,
+            _replyto: formData.email,
+
+            // Booking details
+            'Customer Name':   formData.fullName,
+            'Email':           formData.email,
+            'Phone':           '+91' + formData.phone,
+            'Shoot Type':      formData.shootType,
+            'Package':         formData.packageLabel || formData.package,
+            'Date':            formData.date,
+            'Time':            formData.time,
+            'Location':        formData.location,
+            'Notes':           notes ? notes.value.trim() : '—',
+            'Total Estimate':  '₹' + total.toLocaleString('en-IN'),
+          })
+        }).catch(() => {}); // silently ignore if Formspree fails
+
+        // ── 3. Show success screen ────────────────────────
+        form.style.display = 'none';
+        document.querySelector('.progress-indicator').style.display = 'none';
+        successState.classList.add('active');
+
+        document.getElementById('successDetails').innerHTML = `
+          <div class="success-detail-row"><span>Name</span><span>${formData.fullName}</span></div>
+          <div class="success-detail-row"><span>Email</span><span>${formData.email}</span></div>
+          <div class="success-detail-row"><span>Phone</span><span>+91 ${formData.phone}</span></div>
+          <div class="success-detail-row"><span>Shoot Type</span><span>${formData.shootType}</span></div>
+          <div class="success-detail-row"><span>Package</span><span>${formData.packageLabel || '—'}</span></div>
+          <div class="success-detail-row"><span>Date</span><span>${formData.date}</span></div>
+          <div class="success-detail-row"><span>Time</span><span>${formData.time}</span></div>
+          <div class="success-detail-row"><span>Location</span><span>${formData.location}</span></div>
+          <div class="success-detail-row"><span>Total</span><span>₹${total.toLocaleString('en-IN')}</span></div>
+        `;
+        nextBtn.textContent = 'Continue';
+        nextBtn.disabled    = false;
+      } else {
+        currentStep++;
+        showStep(currentStep);
+      }
+    });
+
+    prevBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (currentStep > 1) { currentStep--; showStep(currentStep); }
+    });
+
+    // Initialize
+    renderCalendar();
+    showStep(1);
+  </script>
+</body>
+</html>
+
+

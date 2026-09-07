@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Contact Us – FlashCut</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='52' font-size='52'>⚡</text></svg>" />
+<meta name="description" content="Get in touch with the FlashCut team. We reply within 24 hours." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+<style>
+:root {
+  --red:       #d4a017;
+  --red-glow:  rgba(212,160,23,0.25);
+  --red-dim:   rgba(212,160,23,0.08);
+  --red-hover: #b8860b;
+  --surface:   #110a0a;
+  --surface2:  #1a0d0d;
+  --border-c:  #2a1010;
+  --shadow:    0 8px 40px rgba(0,0,0,0.6);
+  --radius-c:  14px;
+}
+body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; padding-bottom: var(--mobile-nav-h); }
+
+/* HERO */
+.c-hero { position: relative; text-align: center; padding: 140px 20px 72px; overflow: hidden; }
+.c-hero::before { content: ''; position: absolute; top: -80px; left: 50%; transform: translateX(-50%); width: 600px; height: 600px; background: radial-gradient(circle, rgba(212,160,23,0.18) 0%, transparent 70%); pointer-events: none; }
+.hero-badge { display: inline-block; padding: 6px 18px; border: 1px solid var(--red); border-radius: 50px; font-size: 0.75rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--red); margin-bottom: 24px; }
+.c-hero h1 { font-family: var(--font-display); font-size: clamp(2.4rem, 6vw, 4rem); font-weight: 800; letter-spacing: -1px; color: var(--text); line-height: 1.1; }
+.c-hero h1 span { color: var(--red); }
+.c-hero p { margin-top: 16px; color: var(--text-muted); font-size: 1.05rem; }
+.hero-divider { width: 60px; height: 3px; background: linear-gradient(90deg, var(--red), transparent); margin: 28px auto 0; border-radius: 2px; }
+
+/* LAYOUT */
+.c-container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+.c-section    { padding: 72px 20px; position: relative; z-index: 1; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; }
+
+/* CARD */
+.c-card { background: var(--surface); border: 1px solid var(--border-c); border-radius: var(--radius-c); box-shadow: var(--shadow); padding: 40px; position: relative; overflow: hidden; }
+.c-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--red), transparent); }
+.c-card h2 { font-size: 1.25rem; font-weight: 700; margin-bottom: 28px; color: var(--text); display: flex; align-items: center; gap: 10px; }
+.c-card h2::before { content: ''; display: inline-block; width: 4px; height: 20px; background: var(--red); border-radius: 2px; box-shadow: 0 0 8px var(--red); }
+
+/* INFO ITEMS */
+.info-item { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 24px; padding: 16px; background: var(--surface2); border: 1px solid var(--border-c); border-radius: 10px; transition: border-color .2s; }
+.info-item:hover { border-color: var(--red); }
+.info-icon { width: 44px; height: 44px; background: var(--red-dim); border: 1px solid rgba(212,160,23,0.3); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.1rem; }
+.info-label { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px; }
+.info-value  { font-weight: 600; color: var(--text); font-size: 0.95rem; }
+.info-value a { color: var(--text); text-decoration: none; transition: color .2s; }
+.info-value a:hover { color: var(--red); }
+
+/* SOCIAL */
+.social-divider { border: none; border-top: 1px solid var(--border-c); margin: 24px 0; }
+.social-label   { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; }
+.social-row     { display: flex; gap: 10px; flex-wrap: wrap; }
+.social-btn { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 12px; text-decoration: none; border: 1px solid var(--border-c); background: var(--surface2); transition: all .25s; }
+.social-btn svg { width: 16px; height: 16px; fill: var(--text-muted); transition: fill .25s; }
+.social-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px var(--red-glow); }
+.social-btn.instagram:hover { border-color:#e1306c; background:rgba(225,48,108,.1); } .social-btn.instagram:hover svg { fill:#e1306c; }
+.social-btn.facebook:hover  { border-color:#1877f2; background:rgba(24,119,242,.1); } .social-btn.facebook:hover svg  { fill:#1877f2; }
+.social-btn.youtube:hover   { border-color:#ff0000; background:rgba(255,0,0,.1);   } .social-btn.youtube:hover svg   { fill:#ff0000; }
+.social-btn.tiktok:hover    { border-color:#aaa;    background:rgba(255,255,255,.05);} .social-btn.tiktok:hover svg    { fill:#fff; }
+
+/* FORM */
+.form-group { margin-bottom: 20px; }
+.c-label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 8px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; }
+.c-input, .c-textarea { width: 100%; padding: 13px 16px; border: 1px solid var(--border-c); border-radius: 8px; font-size: 0.95rem; font-family: inherit; color: var(--text); background: var(--surface2); transition: border-color .2s, box-shadow .2s; outline: none; }
+.c-input::placeholder, .c-textarea::placeholder { color: #555; }
+.c-input:focus, .c-textarea:focus { border-color: var(--red); box-shadow: 0 0 0 3px var(--red-glow); }
+.c-textarea { resize: vertical; min-height: 130px; }
+.c-btn-primary { width: 100%; padding: 15px; background: var(--red); color: #fff; border: none; border-radius: 8px; font-size: 0.95rem; font-weight: 700; cursor: pointer; letter-spacing: 0.5px; text-transform: uppercase; box-shadow: 0 4px 20px var(--red-glow); transition: background .2s, transform .15s, box-shadow .2s; }
+.c-btn-primary:hover { background: var(--red-hover); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(212,160,23,0.4); }
+
+/* MAP */
+.map-section { padding: 0 20px 72px; position: relative; z-index: 1; }
+.map-section h2 { text-align: center; font-size: 1.5rem; font-weight: 700; color: var(--text); margin-bottom: 28px; }
+.map-section h2 span { color: var(--red); }
+.map-wrapper { border-radius: var(--radius-c); overflow: hidden; border: 1px solid var(--border-c); box-shadow: var(--shadow); }
+.map-wrapper iframe { display: block; width: 100%; height: 400px; border: 0; filter: grayscale(1) invert(1) contrast(0.9); }
+
+/* FAQ LINKS */
+.faq-section { background: rgba(212,160,23,0.03); border-top: 1px solid var(--border-c); border-bottom: 1px solid var(--border-c); padding: 72px 20px; position: relative; z-index: 1; }
+.faq-section h2 { text-align: center; font-size: 1.5rem; font-weight: 700; color: var(--text); margin-bottom: 40px; }
+.faq-section h2 span { color: var(--red); }
+.faq-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+.faq-link { display: flex; align-items: center; gap: 12px; padding: 18px 20px; border: 1px solid var(--border-c); border-radius: var(--radius-c); text-decoration: none; color: var(--text-muted); font-weight: 600; font-size: 0.9rem; background: var(--surface2); transition: all .2s; }
+.faq-link:hover { border-color: var(--red); color: var(--text); background: var(--red-dim); transform: translateY(-2px); box-shadow: 0 4px 20px var(--red-glow); }
+.faq-link .icon { font-size: 1.2rem; }
+
+/* CTA */
+.c-cta-section { text-align: center; padding: 100px 20px; position: relative; overflow: hidden; z-index: 1; }
+.c-cta-section::before { content: ''; position: absolute; bottom: -100px; left: 50%; transform: translateX(-50%); width: 700px; height: 500px; background: radial-gradient(circle, rgba(212,160,23,0.14) 0%, transparent 65%); pointer-events: none; }
+.c-cta-section h2 { font-family: var(--font-display); font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800; color: var(--text); letter-spacing: -0.5px; }
+.c-cta-section h2 span { color: var(--red); }
+.c-cta-section p  { color: var(--text-muted); margin: 14px 0 40px; font-size: 1.05rem; }
+.cta-btn { display: inline-flex; align-items: center; gap: 10px; padding: 18px 48px; background: var(--red); color: #fff; border-radius: 8px; font-size: 1rem; font-weight: 700; text-decoration: none; text-transform: uppercase; letter-spacing: 0.8px; box-shadow: 0 6px 32px var(--red-glow); transition: all .2s; }
+.cta-btn:hover { background: var(--red-hover); transform: translateY(-3px); box-shadow: 0 12px 48px rgba(212,160,23,0.45); }
+
+/* WHATSAPP */
+@keyframes wa-pulse { 0%{box-shadow:0 0 0 0 rgba(37,211,102,.55)} 70%{box-shadow:0 0 0 14px rgba(37,211,102,0)} 100%{box-shadow:0 0 0 0 rgba(37,211,102,0)} }
+@keyframes wa-bounce { 0%,100%{transform:translateY(0)} 30%{transform:translateY(-6px)} 60%{transform:translateY(-3px)} }
+.wa-float { position: fixed; bottom: calc(var(--mobile-nav-h) + 16px); right: 20px; width: 52px; height: 52px; background: #1a1a1a; border: 2px solid #25d366; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; animation: wa-pulse 2.2s ease-out infinite, wa-bounce 3s ease-in-out infinite; z-index: 998; transition: background .2s; }
+.wa-float:hover { background: #25d366; animation: none; transform: scale(1.1); }
+.wa-float:hover svg { fill: #fff; }
+.wa-float svg { width: 26px; height: 26px; fill: #25d366; transition: fill .2s; }
+@media (min-width: 769px) { .wa-float { bottom: 28px; right: 28px; } }
+
+@media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } .c-card { padding: 24px 18px; } }
+</style>
+</head>
+<body>
+<nav class="nav-desktop" id="navbar"></nav>
+
+<!-- HERO -->
+<header class="c-hero">
+  <div class="hero-badge">FlashCut Support</div>
+  <h1>Get in <span>Touch</span></h1>
+  <p>We're here to help. Reach out and we'll respond within 24 hours.</p>
+  <div class="hero-divider"></div>
+</header>
+
+<!-- CONTACT INFO + FORM -->
+<section class="c-section">
+  <div class="c-container">
+    <div class="grid-2">
+
+      <!-- LEFT: Contact Info -->
+      <div class="c-card">
+        <h2>Contact Information</h2>
+        <div class="info-item">
+          <div class="info-icon">✉️</div>
+          <div><div class="info-label">Email</div><div class="info-value"><a href="mailto:hello@flashcut.com" data-setting="email">hello@flashcut.com</a></div></div>
+        </div>
+        <div class="info-item">
+          <div class="info-icon">📞</div>
+          <div><div class="info-label">Phone</div><div class="info-value"><a href="tel:+919876543210" data-setting="phone">+91 98765 43210</a></div></div>
+        </div>
+        <div class="info-item">
+          <div class="info-icon">📍</div>
+          <div><div class="info-label">Office Address</div><div class="info-value" data-setting="address">Bengaluru, Karnataka, India</div></div>
+        </div>
+        <hr class="social-divider" />
+        <div class="social-label">Follow Us</div>
+        <div class="social-row">
+          <a href="https://www.instagram.com/_flash.cut.studio_?igsh=bDd1OG16b3BtMDg1" class="social-btn instagram" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+          </a>
+          <a href="#" class="social-btn facebook" aria-label="Facebook">
+            <svg viewBox="0 0 24 24"><path d="M24 12.073C24 5.404 18.627 0 12 0S0 5.404 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.971h-1.513c-1.491 0-1.956.931-1.956 1.886v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
+          </a>
+          <a href="#" class="social-btn youtube" aria-label="YouTube">
+            <svg viewBox="0 0 24 24"><path d="M23.495 6.205a3.007 3.007 0 00-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 00.527 6.205a31.247 31.247 0 00-.522 5.805 31.247 31.247 0 00.522 5.783 3.007 3.007 0 002.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 002.088-2.088 31.247 31.247 0 00.5-5.783 31.247 31.247 0 00-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
+          </a>
+          <a href="#" class="social-btn tiktok" aria-label="TikTok">
+            <svg viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- RIGHT: Contact Form -->
+      <div class="c-card">
+        <h2>Send Us a Message</h2>
+        <form id="contactForm">
+          <div class="form-group">
+            <label class="c-label" for="name">Full Name</label>
+            <input class="c-input" type="text" id="name" name="name" placeholder="Jane Doe" required />
+          </div>
+          <div class="form-group">
+            <label class="c-label" for="email">Email Address</label>
+            <input class="c-input" type="email" id="email" name="email" placeholder="jane@example.com" required />
+          </div>
+          <div class="form-group">
+            <label class="c-label" for="phone">Phone Number</label>
+            <input class="c-input" type="tel" id="phone" name="phone" placeholder="+1 (555) 000-0000" />
+          </div>
+          <div class="form-group">
+            <label class="c-label" for="message">Message</label>
+            <textarea class="c-textarea" id="message" name="message" placeholder="How can we help you?" required></textarea>
+          </div>
+          <button type="submit" class="c-btn-primary">Send Message &rarr;</button>
+        </form>
+        <div id="contactResult" style="margin-top:16px;display:none;padding:14px 18px;border-radius:10px;font-weight:600;font-size:.9rem;text-align:center"></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- GOOGLE MAP -->
+<section class="map-section">
+  <div class="c-container">
+    <h2>Find Our <span>Office</span></h2>
+    <div class="map-wrapper">
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3153.019563013762!2d-122.41941548468175!3d37.77492977975912!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8085809c6c8f4459%3A0xb10ed6d9b5050fa5!2sSan%20Francisco%2C%20CA!5e0!3m2!1sen!2sus!4v1625000000000"
+        allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+        title="FlashCut Office Location"></iframe>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ QUICK LINKS -->
+<section class="faq-section">
+  <div class="c-container">
+    <h2>Frequently Asked <span>Questions</span></h2>
+    <div class="faq-grid">
+      <a href="pricing.html" class="faq-link"><span class="icon">��</span> Pricing &amp; Plans</a>
+      <a href="how-it-works.html" class="faq-link"><span class="icon">🚀</span> Getting Started</a>
+      <a href="#" class="faq-link"><span class="icon">🔧</span> Technical Support</a>
+      <a href="#" class="faq-link"><span class="icon">🎬</span> Export &amp; Formats</a>
+      <a href="#" class="faq-link"><span class="icon">🔒</span> Privacy &amp; Security</a>
+      <a href="#" class="faq-link"><span class="icon">🔄</span> Refund Policy</a>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="c-cta-section">
+  <div class="c-container">
+    <h2>Ready to Create <span>Something Amazing?</span></h2>
+    <p>Our team is just a message away. Let's bring your vision to life.</p>
+    <a href="mailto:hello@flashcut.com" class="cta-btn" data-setting="email">Talk to Our Team &rarr;</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a href="index.html" class="logo">Flash<span>Cut</span></a>
+      <p>Shoot. Edit. Deliver.<br />In 10 Minutes.</p>
+    </div>
+    <div class="footer-links">
+      <div class="footer-col">
+        <h5>Company</h5>
+        <a href="index.html">Home</a>
+        <a href="contact.html">Contact</a>
+        <a href="#">Careers</a>
+        <a href="#">Press</a>
+      </div>
+      <div class="footer-col">
+        <h5>Services</h5>
+        <a href="portfolio.html">Portfolio</a>
+        <a href="pricing.html">Pricing</a>
+        <a href="how-it-works.html">How It Works</a>
+        <a href="#">Events</a>
+      </div>
+      <div class="footer-col">
+        <h5>Connect</h5>
+        <a href="#">Instagram</a>
+        <a href="#">TikTok</a>
+        <a href="#">YouTube</a>
+      </div>
+      <div class="footer-col">
+        <div class="social-label">Follow Us</div>
+        <div class="social-row">
+          <a href="https://www.instagram.com/_flash.cut.studio_?igsh=bDd1OG16b3BtMDg1" class="social-btn instagram" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+          </a>
+          <a href="#" class="social-btn facebook" aria-label="Facebook">
+            <svg viewBox="0 0 24 24"><path d="M24 12.073C24 5.404 18.627 0 12 0S0 5.404 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.971h-1.513c-1.491 0-1.956.931-1.956 1.886v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
+          </a>
+          <a href="#" class="social-btn youtube" aria-label="YouTube">
+            <svg viewBox="0 0 24 24"><path d="M23.495 6.205a3.007 3.007 0 00-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 00.527 6.205a31.247 31.247 0 00-.522 5.805 31.247 31.247 0 00.522 5.783 3.007 3.007 0 002.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 002.088-2.088 31.247 31.247 0 00.5-5.783 31.247 31.247 0 00-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
+          </a>
+          <a href="#" class="social-btn tiktok" aria-label="TikTok">
+            <svg viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 FlashCut. All rights reserved.</p>
+      <div class="footer-legal">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- WHATSAPP FLOAT -->
+<a href="https://wa.me/919876543210" class="wa-float" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+
+<nav class="nav-mobile"></nav>
+<script src="nav.js"></script>
+<script src="script.js"></script>
+<script src="settings.js"></script>
+<script>
+document.getElementById('contactForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const btn    = this.querySelector('button[type=submit]');
+  const result = document.getElementById('contactResult');
+  const name    = this.name.value;
+  const email   = this.email.value;
+  const phone   = this.phone.value;
+  const message = this.message.value;
+  btn.textContent = 'Sending…';
+  btn.disabled    = true;
+
+  try {
+    // ── 1. Save to Flask / Supabase ─────────────────────
+    const res  = await fetch('/api/contact', {
+      method:  'POST',
+      headers: {'Content-Type': 'application/json'},
+      body:    JSON.stringify({ name, email, phone, message }),
+    });
+    const data = await res.json();
+    result.style.display = 'block';
+
+    if (data.ok) {
+      result.style.background = 'rgba(34,197,94,0.12)';
+      result.style.border     = '1px solid rgba(34,197,94,0.3)';
+      result.style.color      = '#22c55e';
+      result.textContent      = data.message;
+
+      // ── 2. Send email via Formspree ───────────────────
+      fetch('https://formspree.io/f/xwlkrnjp', {
+        method:  'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          _subject: 'New FlashCut Message — ' + name,
+          _replyto: email,
+          'Name':    name,
+          'Email':   email,
+          'Phone':   phone || '—',
+          'Message': message,
+        })
+      }).catch(() => {});
+
+      this.reset();
+    } else {
+      result.style.background = 'rgba(239,68,68,0.1)';
+      result.style.border     = '1px solid rgba(239,68,68,0.3)';
+      result.style.color      = '#ef4444';
+      result.textContent      = data.error || 'Something went wrong.';
+    }
+  } catch {
+    result.style.display    = 'block';
+    result.style.background = 'rgba(239,68,68,0.1)';
+    result.style.color      = '#ef4444';
+    result.textContent      = 'Could not reach server. Is Flask running?';
+  }
+
+  btn.textContent = 'Send Message →';
+  btn.disabled    = false;
+});
+</script>
+</body>
+</html>

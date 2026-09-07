@@ -1,0 +1,36 @@
+services:
+  - type: web
+    name: flashcut-backend
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --config gunicorn.conf.py
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.0"
+      - key: FLASK_ENV
+        value: production
+      - key: FLASHCUT_SECRET
+        generateValue: true          # Render auto-generates a secure random value
+
+      # ── Supabase ──────────────────────────────────────────
+      - key: SUPABASE_URL
+        sync: false                  # Set in Render dashboard
+      - key: SUPABASE_KEY
+        sync: false                  # Set in Render dashboard (use service_role key)
+
+      # ── Admin credentials ─────────────────────────────────
+      - key: ADMIN_USER
+        sync: false
+      - key: ADMIN_PASS
+        sync: false
+
+      # ── ImageKit ──────────────────────────────────────────
+      - key: IMAGEKIT_PUBLIC_KEY
+        sync: false
+      - key: IMAGEKIT_PRIVATE_KEY
+        sync: false
+      - key: IMAGEKIT_URL_ENDPOINT
+        sync: false
+      - key: IMAGEKIT_FOLDER
+        value: flashcut
+    # No disk needed — Supabase handles all data storage
